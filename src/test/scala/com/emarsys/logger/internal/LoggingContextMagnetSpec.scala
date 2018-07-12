@@ -1,7 +1,7 @@
-package com.emarsys.logger
+package com.emarsys.logger.internal
 
 import cats.{Id, Monad}
-import com.emarsys.logger.logger.Logged
+import com.emarsys.logger.{Context, Logged, LoggingContext}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{Matchers, WordSpec}
 
@@ -31,6 +31,16 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
         |  implicit val m: Monad[Id] = null
         |  implicit val ctx: Context[Id] = null
         |  getMagnet
+      """.stripMargin should compile
+    }
+
+    "work with toCtx syntax" in {
+      """
+        |import com.emarsys.logger.syntax._
+        |
+        |case class Data(a: Int, b: String)
+        |val data = Data(1, "Hello")
+        |getMagnet(data.toCtx("trid"))
       """.stripMargin should compile
     }
 

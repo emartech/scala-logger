@@ -41,6 +41,7 @@ lazy val root = (project in file("."))
         "org.typelevel"        %% "cats-core"               % catsV,
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
+        "com.chuusai"          %% "shapeless"               % "2.3.3",
         "org.scalatest"        %% "scalatest"               % "3.0.5" % "test"
       )
     }

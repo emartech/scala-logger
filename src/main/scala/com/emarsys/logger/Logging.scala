@@ -1,6 +1,7 @@
 package com.emarsys.logger
 
 import cats.Applicative
+import com.emarsys.logger.internal.LoggingContextMagnet
 import net.logstash.logback.marker.LogstashMarker
 import org.slf4j.{Logger, LoggerFactory}
 

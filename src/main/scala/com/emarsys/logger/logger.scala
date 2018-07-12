@@ -1,9 +1,9 @@
 package com.emarsys
 
-import java.util.UUID
-
 import cats.data.ReaderT
 import cats.{Applicative, MonadError}
+import com.emarsys.logger.internal.{LoggingContextMagnet, ToMapRec}
+import shapeless.{HList, LabelledGeneric, Lazy}
 
 package object logger {
 
@@ -52,6 +52,18 @@ package object logger {
 
     def withExtendedLoggingContext[F[_]: Context, A](params: (String, Any)*)(fa: => F[A]): F[A] = {
       Context[F].local(_.addParameters(params: _*))(fa)
+    }
+
+    implicit class AnyToLoggingContextOps[A](a: A) {
+      def toCtx[L <: HList](transactionId: String)(implicit gen: LabelledGeneric.Aux[A, L],
+                                                   toMap: Lazy[ToMapRec[L]]): LoggingContext = {
+        LoggingContext.fromData(a, transactionId)
+      }
+
+      def toCtx[L <: HList](transactionIdExtractor: A => String)(implicit gen: LabelledGeneric.Aux[A, L],
+                                                                 toMap: Lazy[ToMapRec[L]]): LoggingContext = {
+        LoggingContext.fromData(a, transactionIdExtractor(a))
+      }
     }
   }
 }

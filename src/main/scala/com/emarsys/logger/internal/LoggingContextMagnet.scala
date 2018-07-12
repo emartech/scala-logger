@@ -1,6 +1,7 @@
-package com.emarsys.logger
+package com.emarsys.logger.internal
 
 import cats.Monad
+import com.emarsys.logger.{Context, LoggingContext}
 
 import scala.annotation.implicitNotFound
 
