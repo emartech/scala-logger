@@ -47,4 +47,12 @@ lazy val root = (project in file("."))
     }
   )
 
+credentials += Credentials(
+  "Sonatype Nexus Repository Manager",
+  "nexus.service.emarsys.net",
+  sys.env("NEXUS_USERNAME"),
+  sys.env("NEXUS_PASSWORD")
+)
+
+publishTo := Some("releases" at "https://nexus.service.emarsys.net/repository/emartech/")
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
