@@ -39,6 +39,7 @@ lazy val root = (project in file("."))
       val catsV = "1.1.0"
       Seq(
         "org.typelevel"        %% "cats-core"               % catsV,
+        "org.typelevel"        %% "cats-mtl-core"           % "0.3.0",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
         "com.chuusai"          %% "shapeless"               % "2.3.3",

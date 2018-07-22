@@ -20,7 +20,7 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
     "construct from implicit LoggingContext" in {
       """
         |  implicit val lc: LoggingContext = LoggingContext("")
-        |  getMagnet
+        |  getMagnet[Id]
       """.stripMargin should compile
     }
 
@@ -56,10 +56,12 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
 
     "return the context when constructed from a monad and context typeclasses" in {
       import cats.syntax.applicative._
+      import cats.mtl.instances.local._
+
       val lc = LoggingContext("")
 
       implicit val m = Monad[Logged[Id, ?]]
-      implicit val c = Context.rtContext[Id]
+      implicit val c = Context[Logged[Id, ?]]
       val magnet = getMagnet
 
       var resultContext: LoggingContext = null
@@ -71,6 +73,15 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
       a.run(lc)
 
       resultContext should === (lc)
+    }
+
+    "asd" in {
+      import com.emarsys.logger.implicits._
+
+      implicit val m = Monad[Logged[Id, ?]]
+      implicit val c = Context[Logged[Id, ?]]
+
+      log.warn("")
     }
 
   }
