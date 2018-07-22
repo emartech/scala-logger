@@ -36,10 +36,10 @@ lazy val root = (project in file("."))
       "-Xlint"
     ),
     libraryDependencies ++= {
-      val catsV = "1.1.0"
       Seq(
-        "org.typelevel"        %% "cats-core"               % catsV,
+        "org.typelevel"        %% "cats-core"               % "1.1.0",
         "org.typelevel"        %% "cats-mtl-core"           % "0.3.0",
+        "org.typelevel"        %% "cats-effect"             % "1.0.0-RC2",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
         "com.chuusai"          %% "shapeless"               % "2.3.3",

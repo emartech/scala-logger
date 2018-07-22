@@ -10,7 +10,7 @@ import org.slf4j.{LoggerFactory, Marker}
 
 import scala.collection.JavaConverters._
 
-class LogbackLoggerInstanceSpec extends FlatSpec with Matchers with TypeCheckedTripleEquals with LoggerBehavior {
+class LogbackLoggingInstanceSpec extends FlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior {
 
   "Logging.debug" should behave like simpleLog(Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg)(ctx) })
 
@@ -32,14 +32,14 @@ class LogbackLoggerInstanceSpec extends FlatSpec with Matchers with TypeCheckedT
 
 }
 
-trait LoggerBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEquals =>
+trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEquals =>
   type SimpleLogFn       = (Logging[Id], String, LoggingContext) => Unit
   type ErrorLogFn        = (Logging[Id], Throwable, LoggingContext) => Unit
   type ErrorLogWithMsgFn = (Logging[Id], Throwable, String, LoggingContext) => Unit
 
   trait LoggingScope {
 
-    val logger: Logging[Id] = Logging.defaultLogging
+    val logger: Logging[Id] = Logging.unsafeLogstashLogging
 
     val appender = new TestAppender
     appender.start()
@@ -50,6 +50,10 @@ trait LoggerBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEquals
   }
 
   def simpleLog(level: Level, logFn: SimpleLogFn): Unit = {
+    it should "not log when level is disabled" in new LoggingScope {
+
+    }
+
     it should "log with the correct level" in new LoggingScope {
       val ctx = LoggingContext("trid")
       logFn(logger, "message", ctx)

@@ -55,8 +55,8 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
     }
 
     "return the context when constructed from a monad and context typeclasses" in {
-      import cats.syntax.applicative._
       import cats.mtl.instances.local._
+      import cats.syntax.applicative._
 
       val lc = LoggingContext("")
 
@@ -74,16 +74,5 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
 
       resultContext should === (lc)
     }
-
-    "asd" in {
-      import com.emarsys.logger.implicits._
-
-      implicit val m = Monad[Logged[Id, ?]]
-      implicit val c = Context[Logged[Id, ?]]
-
-      log.warn("")
-    }
-
   }
-
 }
