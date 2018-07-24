@@ -3,7 +3,6 @@ package com.emarsys.logger
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{Matchers, WordSpec}
 
-
 class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
   "LoggingContext" should {
@@ -12,7 +11,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
 
       val extended = ctx.addParameter("id" -> 1)
 
-      extended should === (LoggingContext("trid", Map("id" -> 1)))
+      extended should ===(LoggingContext("trid", Map("id" -> 1)))
     }
 
     "add log parameters via + operator" in {
@@ -20,7 +19,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
 
       val extended = ctx + ("id" -> 1)
 
-      extended should === (LoggingContext("trid", Map("id" -> 1)))
+      extended should ===(LoggingContext("trid", Map("id" -> 1)))
     }
 
     "add multiple log parameters via addParameters" in {
@@ -28,7 +27,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
 
       val extended = ctx.addParameters("id" -> 1, "name" -> "Joe")
 
-      extended should === (LoggingContext("trid", Map("id" -> 1, "name" -> "Joe")))
+      extended should ===(LoggingContext("trid", Map("id" -> 1, "name" -> "Joe")))
     }
 
     "add multiple log parameters via ++" in {
@@ -36,7 +35,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
 
       val extended = ctx ++ ("id" -> 1, "name" -> "Joe")
 
-      extended should === (LoggingContext("trid", Map("id" -> 1, "name" -> "Joe")))
+      extended should ===(LoggingContext("trid", Map("id" -> 1, "name" -> "Joe")))
     }
   }
 

@@ -1,7 +1,7 @@
 package com.emarsys.logger.internal
 
-import shapeless.labelled.FieldType
 import shapeless._
+import shapeless.labelled.FieldType
 
 trait ToMapRec[L <: HList] { def apply(l: L): Map[String, Any] }
 

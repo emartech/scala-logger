@@ -4,8 +4,8 @@ import cats.data.ReaderT
 import cats.mtl.ApplicativeLocal
 import cats.mtl.instances.LocalInstances
 import cats.{Applicative, Id, MonadError}
-import com.emarsys.logger.{Context, Logged, Logging, LoggingContext}
 import com.emarsys.logger.internal.{LoggingContextMagnet, ToMapRec}
+import com.emarsys.logger.{Context, Logged, Logging, LoggingContext}
 import shapeless.{HList, LabelledGeneric, Lazy}
 
 package object logger {

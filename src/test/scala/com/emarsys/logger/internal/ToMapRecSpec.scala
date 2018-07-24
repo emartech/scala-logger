@@ -17,7 +17,7 @@ class ToMapRecSpec extends WordSpec with TypeCheckedTripleEquals with Matchers {
 
       val map = toMapRec(simple)
 
-      map should === (Map("i" -> 0))
+      map should ===(Map("i" -> 0))
     }
 
     "convert nested case classes to maps" in {
@@ -27,7 +27,7 @@ class ToMapRecSpec extends WordSpec with TypeCheckedTripleEquals with Matchers {
 
       val map = toMapRec(nested)
 
-      map should === (Map("simple" -> Map("i" -> 0)))
+      map should ===(Map("simple" -> Map("i" -> 0)))
     }
 
     "convert multiple levels of nested case classes to maps" in {
@@ -38,7 +38,7 @@ class ToMapRecSpec extends WordSpec with TypeCheckedTripleEquals with Matchers {
 
       val map = toMapRec(nested)
 
-      map should === (Map("nested1" -> Map("simple" -> Map("i" -> 0))))
+      map should ===(Map("nested1" -> Map("simple" -> Map("i" -> 0))))
     }
 
     "convert case classes containing null to maps" in {
@@ -48,8 +48,7 @@ class ToMapRecSpec extends WordSpec with TypeCheckedTripleEquals with Matchers {
 
       val map = toMapRec(simple)
 
-      map should === (Map("s" -> null))
+      map should ===(Map("s" -> null))
     }
   }
-
 }

@@ -3,7 +3,7 @@ lazy val commonSettings = Seq(
   organization := "com.emarsys"
 )
 
-lazy val root = (project in file("."))
+lazy val `scala-logger` = (project in file("."))
   .settings(commonSettings: _*)
   .settings(
     name := "scala-logger",

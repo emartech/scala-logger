@@ -50,9 +50,6 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
   }
 
   def simpleLog(level: Level, logFn: SimpleLogFn): Unit = {
-    it should "not log when level is disabled" in new LoggingScope {
-
-    }
 
     it should "log with the correct level" in new LoggingScope {
       val ctx = LoggingContext("trid")

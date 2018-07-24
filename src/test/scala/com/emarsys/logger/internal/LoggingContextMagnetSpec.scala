@@ -45,13 +45,13 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
     }
 
     "return the context when constructed from a logging context" in {
-      val lc = LoggingContext("")
+      val lc     = LoggingContext("")
       val magnet = getMagnet[Id](lc)
 
       var resultContext: LoggingContext = null
       magnet(ctx => resultContext = ctx)
 
-      resultContext should === (lc)
+      resultContext should ===(lc)
     }
 
     "return the context when constructed from a monad and context typeclasses" in {
@@ -62,17 +62,17 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
 
       implicit val m = Monad[Logged[Id, ?]]
       implicit val c = Context[Logged[Id, ?]]
-      val magnet = getMagnet
+      val magnet     = getMagnet
 
       var resultContext: LoggingContext = null
-      val a = magnet{ctx =>
+      val a = magnet { ctx =>
         resultContext = ctx
         ().pure
       }
 
       a.run(lc)
 
-      resultContext should === (lc)
+      resultContext should ===(lc)
     }
   }
 }
