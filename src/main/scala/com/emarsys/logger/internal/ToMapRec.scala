@@ -41,4 +41,10 @@ object ToMapRec extends LowPriorityToMapRec {
 
     restConverted + entry
   }
+
+  def toMap[A, L <: HList](a: A)(implicit gen: LabelledGeneric.Aux[A, L], toMap: Lazy[ToMapRec[L]]): Map[String, Any] = {
+    val genericRepresentation = gen.to(a)
+    toMap.value(genericRepresentation)
+  }
+
 }

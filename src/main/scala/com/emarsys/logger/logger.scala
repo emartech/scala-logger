@@ -83,6 +83,10 @@ trait LoggerSyntax {
                                                                toMap: Lazy[ToMapRec[L]]): LoggingContext = {
       LoggingContext.fromData(a, transactionIdExtractor(a))
     }
+
+    def toLoggable[L <: HList](implicit gen: LabelledGeneric.Aux[A, L], toMap: Lazy[ToMapRec[L]]): Map[String, Any] = {
+      ToMapRec.toMap(a)
+    }
   }
 
 }

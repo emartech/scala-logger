@@ -15,8 +15,7 @@ case class LoggingContext(transactionID: String, logData: Map[String, Any] = Map
 object LoggingContext {
   def fromData[Data, L <: HList](data: Data, transactionId: String)(implicit gen: LabelledGeneric.Aux[Data, L],
                                                                     toMap: Lazy[ToMapRec[L]]) = {
-    val genericRepresentation = gen.to(data)
-    val map                   = toMap.value(genericRepresentation)
+    val map = ToMapRec.toMap(data)
     LoggingContext(transactionId, map)
   }
 }
