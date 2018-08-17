@@ -43,7 +43,8 @@ lazy val `scala-logger` = (project in file("."))
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
         "com.chuusai"          %% "shapeless"               % "2.3.3",
-        "org.scalatest"        %% "scalatest"               % "3.0.5" % "test"
+        "org.scalatest"        %% "scalatest"               % "3.0.5" % "test",
+        "com.github.mpilquist" %% "simulacrum"              % "0.13.0"
       )
     }
   )
@@ -56,4 +57,5 @@ credentials += Credentials(
 )
 
 publishTo := Some("releases" at "https://nexus.service.emarsys.net/repository/emartech/")
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
+addCompilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.6")
+addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.0" cross CrossVersion.full)
