@@ -1,4 +1,5 @@
 package com.emarsys.logger.loggable
+import cats.Show
 import cats.kernel.Eq
 
 sealed abstract class LoggableValue {
@@ -7,6 +8,7 @@ sealed abstract class LoggableValue {
 
 object LoggableValue {
   implicit val eq: Eq[LoggableValue] = Eq.fromUniversalEquals
+  implicit val show: Show[LoggableValue] = Show.fromToString
 }
 
 final case class LoggableIntegral(value: Long) extends LoggableValue

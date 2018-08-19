@@ -44,6 +44,7 @@ lazy val `scala-logger` = (project in file("."))
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
         "com.chuusai"          %% "shapeless"               % "2.3.3",
         "org.scalatest"        %% "scalatest"               % "3.0.5" % "test",
+        "org.scalacheck"       %% "scalacheck"              % "1.14.0" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.13.0"
       )
     }
