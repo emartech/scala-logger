@@ -59,16 +59,18 @@ trait LoggerSyntax {
   }
 
   implicit class LogConverter[F[_], A](fa: F[A]) {
-    def toLogged: Logged[F, A] = withLoggingContext(_ => fa)
+    def toLogged: Logged[F, A] = withContext(_ => fa)
   }
 
-  def withLoggingContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = ReaderT(block)
+  def withContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = ReaderT(block)
 
-  def getLoggingContext[F[_]: Applicative]: Logged[F, LoggingContext] = ReaderT.ask[F, LoggingContext]
+  def getReaderContext[F[_]: Applicative]: Logged[F, LoggingContext] = ReaderT.ask[F, LoggingContext]
 
-  def withExtendedLoggingContextRT[F[_], A](ctxExtender: LoggingContext => LoggingContext)(block: LoggingContext => F[A]): Logged[F, A] =
+  def getContext[F[_]: Context]: F[LoggingContext] = Context[F].ask.ask
+
+  def extendReaderContext[F[_], A](ctxExtender: LoggingContext => LoggingContext)(block: LoggingContext => F[A]): Logged[F, A] =
     ReaderT.local(ctxExtender)(ReaderT(block))
 
-  def withExtendedLoggingContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
+  def extendContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
     Context[F].local(ctxExtender)(fa)
 }
