@@ -18,7 +18,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
     "add log parameters via + operator" in {
       val ctx = LoggingContext("trid")
 
-      val extended = ctx + ("id" -> 1)
+      val extended = ctx <> "id" -> 1
 
       extended should ===(LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L)))))
     }
@@ -26,7 +26,7 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
     "allow chaining + operators" in {
       val ctx = LoggingContext("trid")
 
-      val extended = ctx + ("id" -> 1) + ("name" -> "xy")
+      val extended = ctx <> "id" -> 1 <> "name" -> "xy"
 
       extended should ===(LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))))
     }

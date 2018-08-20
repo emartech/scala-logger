@@ -39,7 +39,7 @@ trait Logging[F[_]] {
   private[logger] def logError(msg: => String, ctx: LoggingContext): F[Unit]
 
   private def errorContext(t: Throwable, ctx: LoggingContext) =
-    ctx + ("exception" -> errorData(t))
+    ctx <> "exception" -> errorData(t)
 
   private def errorData(t: Throwable): LoggableValue = {
     val map = Map[String, LoggableValue](
