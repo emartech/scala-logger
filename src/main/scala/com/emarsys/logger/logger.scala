@@ -13,7 +13,7 @@ package object logger {
   type Context[F[_]] = ApplicativeLocal[F, LoggingContext]
 
   object Context {
-    def apply[F[_]](implicit ev: Context[F]): Context[F] = ev
+    @inline def apply[F[_]](implicit ev: Context[F]): Context[F] = ev
   }
 
   object instances extends AllInstances

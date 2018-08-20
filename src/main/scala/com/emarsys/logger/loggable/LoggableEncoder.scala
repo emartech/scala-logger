@@ -9,7 +9,7 @@ import simulacrum.typeclass
   def toLoggable(a: A): LoggableValue
 }
 
-object LoggableEncoder extends LoggableEncoderStdlib1 with LoggableEncoderStdlib2 {
+object LoggableEncoder extends LoggableEncoderStdlib1 with LoggableEncoderStdlib2 with GenericLoggableEncoder {
 
   implicit val contravariantLoggableEncoder: Contravariant[LoggableEncoder] = new Contravariant[LoggableEncoder] {
     override def contramap[A, B](fa: LoggableEncoder[A])(f: B => A): LoggableEncoder[B] = b => fa.toLoggable(f(b))
