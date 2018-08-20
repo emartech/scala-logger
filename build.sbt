@@ -42,7 +42,6 @@ lazy val `scala-logger` = (project in file("."))
         "org.typelevel"        %% "cats-effect"             % "1.0.0-RC2",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
-        "com.chuusai"          %% "shapeless"               % "2.3.3",
         "org.scalatest"        %% "scalatest"               % "3.0.5" % "test",
         "org.scalacheck"       %% "scalacheck"              % "1.14.0" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.13.0"

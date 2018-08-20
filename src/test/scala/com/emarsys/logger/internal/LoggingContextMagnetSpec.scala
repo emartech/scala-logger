@@ -34,16 +34,6 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
       """.stripMargin should compile
     }
 
-    "work with toCtx syntax" in {
-      """
-        |import com.emarsys.logger.syntax._
-        |
-        |case class Data(a: Int, b: String)
-        |val data = Data(1, "Hello")
-        |getMagnet(data.toCtx("trid"))
-      """.stripMargin should compile
-    }
-
     "return the context when constructed from a logging context" in {
       val lc     = LoggingContext("")
       val magnet = getMagnet[Id](lc)

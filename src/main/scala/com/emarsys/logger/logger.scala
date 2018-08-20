@@ -4,10 +4,9 @@ import cats.data.ReaderT
 import cats.mtl.ApplicativeLocal
 import cats.mtl.instances.LocalInstances
 import cats.{Applicative, Id, MonadError}
-import com.emarsys.logger.internal.{LoggingContextMagnet, ToMapRec}
+import com.emarsys.logger.internal.LoggingContextMagnet
 import com.emarsys.logger.loggable.LoggableEncoder
 import com.emarsys.logger.{Context, Logged, Logging, LoggingContext}
-import shapeless.{HList, LabelledGeneric, Lazy}
 
 package object logger {
 
@@ -72,21 +71,4 @@ trait LoggerSyntax {
 
   def withExtendedLoggingContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
     Context[F].local(ctxExtender)(fa)
-
-  implicit class AnyToLoggingContextOps[A](a: A) {
-    def toCtx[L <: HList](transactionId: String)(implicit gen: LabelledGeneric.Aux[A, L],
-                                                 toMap: Lazy[ToMapRec[L]]): LoggingContext = {
-      LoggingContext.fromData(a, transactionId)
-    }
-
-    def toCtx[L <: HList](transactionIdExtractor: A => String)(implicit gen: LabelledGeneric.Aux[A, L],
-                                                               toMap: Lazy[ToMapRec[L]]): LoggingContext = {
-      LoggingContext.fromData(a, transactionIdExtractor(a))
-    }
-
-    def toLoggable[L <: HList](implicit gen: LabelledGeneric.Aux[A, L], toMap: Lazy[ToMapRec[L]]): Map[String, Any] = {
-      ToMapRec.toMap(a)
-    }
-  }
-
 }
