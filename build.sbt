@@ -7,7 +7,7 @@ lazy val `scala-logger` = (project in file("."))
   .settings(commonSettings: _*)
   .settings(
     name := "scala-logger",
-    version := "0.1.1",
+    version := "0.2.0",
     scalacOptions ++= Seq(
       "-deprecation",
       "-encoding",
