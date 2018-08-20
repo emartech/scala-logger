@@ -3,44 +3,53 @@ package com.emarsys.logger
 import cats.effect.Sync
 import cats.{Applicative, Id}
 import com.emarsys.logger.internal.LoggingContextMagnet
+import com.emarsys.logger.loggable._
 import net.logstash.logback.marker.LogstashMarker
 import org.slf4j.{Logger, LoggerFactory}
 
 trait Logging[F[_]] {
   def debug(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(logDebug(msg, _))
-  private[logger] def logDebug(msg: => String, ctx: LoggingContext): F[Unit]
 
   def info(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(logInfo(msg, _))
-  private[logger] def logInfo(msg: => String, ctx: LoggingContext): F[Unit]
 
   def warn(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(logWarn(msg, _))
+
   def warn(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = error(cause, "Warn")
+
+  def error(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
+    magnet(ctx => logError(msg, errorContext(cause, ctx)))
+
   def warn(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(ctx => logWarn(msg, errorContext(cause, ctx)))
-  private[logger] def logWarn(msg: => String, ctx: LoggingContext): F[Unit]
 
   def error(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(logError(msg, _))
+
   def error(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = error(cause, "Error")
-  def error(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(ctx => logError(msg, errorContext(cause, ctx)))
+
+  private[logger] def logDebug(msg: => String, ctx: LoggingContext): F[Unit]
+
+  private[logger] def logInfo(msg: => String, ctx: LoggingContext): F[Unit]
+
+  private[logger] def logWarn(msg: => String, ctx: LoggingContext): F[Unit]
+
   private[logger] def logError(msg: => String, ctx: LoggingContext): F[Unit]
 
   private def errorContext(t: Throwable, ctx: LoggingContext) =
     ctx + ("exception" -> errorData(t))
 
-  private def errorData(t: Throwable): Map[String, _] = {
-    val map = Map(
-      "class"      -> t.getClass,
-      "message"    -> t.getMessage,
-      "stacktrace" -> t.getStackTrace.toSeq.map(_.toString)
+  private def errorData(t: Throwable): LoggableValue = {
+    val map = Map[String, LoggableValue](
+      "class"      -> LoggableString(t.getClass.getCanonicalName),
+      "message"    -> LoggableString(t.getMessage),
+      "stacktrace" -> LoggableString(t.getStackTrace.toSeq.mkString("\n"))
     )
 
-    if (t.getCause != null) map + ("cause" -> errorData(t.getCause))
-    else map
+    if (t.getCause != null) LoggableObject(map + ("cause" -> errorData(t.getCause)))
+    else LoggableObject(map)
   }
 }
 
@@ -71,14 +80,18 @@ trait UnsafeLogstashLogging {
   import scala.collection.JavaConverters._
 
   private def context(ctx: LoggingContext): LogstashMarker = {
-    append("transactionId", ctx.transactionID) and appendEntries(toJava(ctx.logData))
+    append("transactionId", ctx.transactionID) and appendEntries(toJava(ctx.logData.obj))
   }
 
-  private def toJava(logData: Map[String, Any]): java.util.Map[_, _] = logData.mapValues(toJava).asJava
-  private def toJava(a: Any): Any = a match {
-    case m: Map[_, _]   => m.mapValues(toJava).asJava
-    case i: Iterable[_] => i.map(toJava).asJava
-    case _              => a
+  private def toJava(logData: Map[String, LoggableValue]): java.util.Map[_, _] = logData.mapValues(toJava).asJava
+  private def toJava(lv: LoggableValue): Any = lv match {
+    case LoggableIntegral(value) => value
+    case LoggableFloating(value) => value
+    case LoggableString(value)   => value
+    case LoggableBoolean(value)  => value
+    case LoggableList(list)      => list.map(toJava).asJava
+    case LoggableObject(obj)     => obj.mapValues(toJava).asJava
+    case LoggableNil             => null
   }
 
   implicit lazy val unsafeLogstashLogging: Logging[Id] = new Logging[Id] {

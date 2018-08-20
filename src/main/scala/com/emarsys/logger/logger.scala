@@ -5,6 +5,7 @@ import cats.mtl.ApplicativeLocal
 import cats.mtl.instances.LocalInstances
 import cats.{Applicative, Id, MonadError}
 import com.emarsys.logger.internal.{LoggingContextMagnet, ToMapRec}
+import com.emarsys.logger.loggable.LoggableEncoder
 import com.emarsys.logger.{Context, Logged, Logging, LoggingContext}
 import shapeless.{HList, LabelledGeneric, Lazy}
 
@@ -20,7 +21,7 @@ package object logger {
 
   object instances extends LoggerInstances
 
-  object syntax extends LoggerSyntax
+  object syntax extends LoggerSyntax with LoggableEncoder.ToLoggableEncoderOps
 
   object implicits extends LoggerInstances with LoggerSyntax
 }
@@ -66,12 +67,11 @@ trait LoggerSyntax {
 
   def getLoggingContext[F[_]: Applicative]: Logged[F, LoggingContext] = ReaderT.ask[F, LoggingContext]
 
-  def withExtendedLoggingContextRT[F[_], A](params: (String, Any)*)(block: LoggingContext => F[A]): Logged[F, A] =
-    ReaderT.local[F, A, LoggingContext](_.addParameters(params: _*))(ReaderT(block))
+  def withExtendedLoggingContextRT[F[_], A](ctxExtender: LoggingContext => LoggingContext)(block: LoggingContext => F[A]): Logged[F, A] =
+    ReaderT.local(ctxExtender)(ReaderT(block))
 
-  def withExtendedLoggingContext[F[_]: Context, A](params: (String, Any)*)(fa: => F[A]): F[A] = {
-    Context[F].local(_.addParameters(params: _*))(fa)
-  }
+  def withExtendedLoggingContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
+    Context[F].local(ctxExtender)(fa)
 
   implicit class AnyToLoggingContextOps[A](a: A) {
     def toCtx[L <: HList](transactionId: String)(implicit gen: LabelledGeneric.Aux[A, L],

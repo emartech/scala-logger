@@ -2,6 +2,7 @@ package com.emarsys.logger
 
 import cats.Id
 import ch.qos.logback.classic.{Level, Logger}
+import com.emarsys.logger.loggable.{LoggableIntegral, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender
 import net.logstash.logback.marker.Markers
 import org.scalactic.TypeCheckedTripleEquals
@@ -37,18 +38,6 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
   type ErrorLogFn        = (Logging[Id], Throwable, LoggingContext) => Unit
   type ErrorLogWithMsgFn = (Logging[Id], Throwable, String, LoggingContext) => Unit
 
-  trait LoggingScope {
-
-    val logger: Logging[Id] = Logging.unsafeLogstashLogging
-
-    val appender = new TestAppender
-    appender.start()
-
-    private val underlyingLogger = LoggerFactory.getLogger("default").asInstanceOf[Logger]
-    underlyingLogger.detachAndStopAllAppenders()
-    underlyingLogger.addAppender(appender)
-  }
-
   def simpleLog(level: Level, logFn: SimpleLogFn): Unit = {
 
     it should "log with the correct level" in new LoggingScope {
@@ -73,12 +62,12 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     }
 
     it should "log the extended context" in new LoggingScope {
-      val ctx = LoggingContext("trid", Map("id" -> 1))
+      val ctx = LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1))))
       logFn(logger, "message", ctx)
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
-      marker(1) should ===(Markers.appendEntries(Map("id" -> 1).asJava))
+      marker(1) should ===(Markers.appendEntries(Map("id" -> 1L).asJava))
     }
   }
 
@@ -93,9 +82,9 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
       val errorMarker = Markers.appendEntries(
         Map(
           "exception" -> Map(
-            "class"      -> error.getClass,
+            "class"      -> error.getClass.getCanonicalName,
             "message"    -> error.getMessage,
-            "stacktrace" -> error.getStackTrace.toSeq.map(_.toString).asJava
+            "stacktrace" -> error.getStackTrace.mkString("\n")
           ).asJava
         ).asJava)
       marker(1).toString should ===(errorMarker.toString)
@@ -111,9 +100,9 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
       val errorMarker = Markers.appendEntries(
         Map(
           "exception" -> Map(
-            "class"      -> error.getClass,
+            "class"      -> error.getClass.getCanonicalName,
             "message"    -> error.getMessage,
-            "stacktrace" -> error.getStackTrace.toSeq.map(_.toString).asJava
+            "stacktrace" -> error.getStackTrace.mkString("\n")
           ).asJava
         ).asJava)
       marker(1).toString should ===(errorMarker.toString)
@@ -134,6 +123,18 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     } else {
       marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
     }
+  }
+
+  trait LoggingScope {
+
+    val logger: Logging[Id] = Logging.unsafeLogstashLogging
+
+    val appender = new TestAppender
+    appender.start()
+
+    private val underlyingLogger = LoggerFactory.getLogger("default").asInstanceOf[Logger]
+    underlyingLogger.detachAndStopAllAppenders()
+    underlyingLogger.addAppender(appender)
   }
 
 }

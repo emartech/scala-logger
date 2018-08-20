@@ -49,7 +49,6 @@ private[loggable] trait LoggableEncoderStdlib1 {
 
   implicit def dict[A: LoggableEncoder]: LoggableEncoder[Map[String, A]] =
     m => LoggableObject(m.map { case (k, v) => (k, v.toLoggable) })
-
 }
 
 private[loggable] trait LoggableEncoderStdlib2 {

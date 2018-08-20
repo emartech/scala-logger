@@ -1,21 +1,25 @@
 package com.emarsys.logger
 
 import com.emarsys.logger.internal.ToMapRec
+import com.emarsys.logger.loggable.{LoggableEncoder, LoggableObject}
 import shapeless.{HList, LabelledGeneric, Lazy}
 
-case class LoggingContext(transactionID: String, logData: Map[String, Any] = Map.empty) {
-  def +(param: (String, Any)): LoggingContext                    = addParameter(param)
-  def addParameter[T <: Any](param: (String, T)): LoggingContext = addParameters(param)
+case class LoggingContext(transactionID: String, logData: LoggableObject = LoggableObject(Map.empty)) {
+  import cats.implicits._
+  import LoggableEncoder.ops._
 
-  def ++(parameters: (String, Any)*): LoggingContext = addParameters(parameters: _*)
-  def addParameters(parameters: (String, Any)*): LoggingContext =
-    LoggingContext(transactionID, logData ++ parameters)
+  def +[T: LoggableEncoder](param: (String, T)): LoggingContext = addParameter(param)
+  def addParameter[T: LoggableEncoder](param: (String, T)): LoggingContext = {
+    val encodedParam = param.map(_.toLoggable)
+    copy(logData = LoggableObject(logData.obj + encodedParam))
+  }
 }
 
 object LoggingContext {
   def fromData[Data, L <: HList](data: Data, transactionId: String)(implicit gen: LabelledGeneric.Aux[Data, L],
                                                                     toMap: Lazy[ToMapRec[L]]): LoggingContext = {
-    val map = ToMapRec.toMap(data)
-    LoggingContext(transactionId, map)
+//    val map = ToMapRec.toMap(data)
+//    LoggingContext(transactionId, map)
+    ???
   }
 }
