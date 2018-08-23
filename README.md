@@ -1,4 +1,4 @@
-#Scala Logger
+# Scala Logger
 
 ## Usage
 
