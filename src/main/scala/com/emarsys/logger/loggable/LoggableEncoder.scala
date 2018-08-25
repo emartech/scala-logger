@@ -4,6 +4,7 @@ import cats.syntax.all._
 import cats.{Contravariant, Traverse}
 import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
 import simulacrum.typeclass
+import scala.language.implicitConversions
 
 @typeclass trait LoggableEncoder[A] {
   def toLoggable(a: A): LoggableValue

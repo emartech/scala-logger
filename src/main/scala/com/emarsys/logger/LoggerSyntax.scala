@@ -2,9 +2,6 @@ package com.emarsys.logger
 import cats.data.ReaderT
 import cats.{Applicative, Id, MonadError}
 import com.emarsys.logger.internal.LoggingContextMagnet
-import com.emarsys.logger.loggable.LoggableEncoder
-
-import scala.language.experimental.macros
 
 trait LoggerSyntax {
   import cats.syntax.applicativeError._

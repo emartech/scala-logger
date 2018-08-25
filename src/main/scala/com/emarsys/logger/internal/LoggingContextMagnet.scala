@@ -4,6 +4,7 @@ import cats.Monad
 import com.emarsys.logger.{Context, LoggingContext}
 
 import scala.annotation.implicitNotFound
+import scala.language.implicitConversions
 
 @implicitNotFound(
   msg =
