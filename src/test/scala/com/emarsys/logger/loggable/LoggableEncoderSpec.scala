@@ -142,7 +142,8 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
         val nested = Nested(Simple(42))
 
         nestedEncoder.toLoggable(nested) should ===(
-          LoggableObject(Map("s" -> LoggableObject(Map("i" -> LoggableIntegral(42))))))
+          LoggableObject(Map("s" -> LoggableObject(Map("i" -> LoggableIntegral(42)))))
+        )
       }
 
       "ADT" in {

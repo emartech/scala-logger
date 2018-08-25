@@ -86,7 +86,8 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
             "message"    -> error.getMessage,
             "stacktrace" -> error.getStackTrace.mkString("\n")
           ).asJava
-        ).asJava)
+        ).asJava
+      )
       marker(1).toString should ===(errorMarker.toString)
     }
 
@@ -104,7 +105,8 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
             "message"    -> error.getMessage,
             "stacktrace" -> error.getStackTrace.mkString("\n")
           ).asJava
-        ).asJava)
+        ).asJava
+      )
       marker(1).toString should ===(errorMarker.toString)
     }
 

@@ -29,7 +29,8 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
       val extended = ctx <> "id" -> 1 <> "name" -> "xy"
 
       extended should ===(
-        LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))))
+        LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy"))))
+      )
     }
 
     "allow chaining addParameter calls" in {
@@ -38,7 +39,8 @@ class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEq
       val extended = ctx.addParameter("id" -> 1).addParameter("name" -> "xy")
 
       extended should ===(
-        LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))))
+        LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy"))))
+      )
     }
   }
 

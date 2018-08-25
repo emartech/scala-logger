@@ -4,8 +4,6 @@ import org.scalatest.{Matchers, WordSpec}
 
 class GenericLoggableEncoderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
-  "MagnoliaLoggableEncoder.gen" should {
-
-  }
+  "MagnoliaLoggableEncoder.gen" should {}
 
 }
