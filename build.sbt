@@ -60,3 +60,5 @@ credentials += Credentials(
 publishTo := Some("releases" at "https://nexus.service.emarsys.net/repository/emartech/")
 addCompilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.6")
 addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.0" cross CrossVersion.full)
+
+addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
