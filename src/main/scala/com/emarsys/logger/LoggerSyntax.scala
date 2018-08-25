@@ -47,8 +47,9 @@ trait LoggerSyntax {
 
   def getContext[F[_]: Context]: F[LoggingContext] = Context[F].ask.ask
 
-  def extendReaderContext[F[_], A](ctxExtender: LoggingContext => LoggingContext)(
-      block: LoggingContext => F[A]): Logged[F, A] =
+  def extendReaderContext[F[_], A](
+      ctxExtender: LoggingContext => LoggingContext
+  )(block: LoggingContext => F[A]): Logged[F, A] =
     ReaderT.local(ctxExtender)(ReaderT(block))
 
   def extendContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
