@@ -165,9 +165,21 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
         }
       }
 
-      "duration" in {
+      "jdkDuration" in {
         check {
           forAll(durationGen)((dt: java.time.Duration) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "scalaDuration" in {
+        check {
+          forAll((dt: scala.concurrent.duration.Duration) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "scalaFiniteDuration" in {
+        check {
+          forAll((dt: scala.concurrent.duration.FiniteDuration) => dt.toLoggable === LoggableString(dt.toString))
         }
       }
     }

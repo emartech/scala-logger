@@ -15,7 +15,8 @@ import scala.language.implicitConversions
 
 object LoggableEncoder
     extends LoggableEncoderStdlib1
-    with LoggableEncoderDateTime
+    with LoggableEncoderJdk8DateTime
+    with LoggableEncoderScalaDuration
     with LoggableEncoderStdlib2
     with GenericLoggableEncoder {
 
@@ -62,17 +63,24 @@ private[loggable] trait LoggableEncoderStdlib1 {
     m => LoggableObject(m.map { case (k, v) => (k, v.toLoggable) })
 }
 
-private[loggable] trait LoggableEncoderDateTime {
+private[loggable] trait LoggableEncoderJdk8DateTime {
   self: LoggableEncoder.type =>
 
-  implicit lazy val instant: LoggableEncoder[Instant]               = fromToString
-  implicit lazy val localDate: LoggableEncoder[LocalDate]           = fromToString
-  implicit lazy val localTime: LoggableEncoder[LocalTime]           = fromToString
-  implicit lazy val localDateTime: LoggableEncoder[LocalDateTime]   = fromToString
-  implicit lazy val zonedDateTime: LoggableEncoder[ZonedDateTime]   = fromToString
-  implicit lazy val offsetTime: LoggableEncoder[OffsetTime]         = fromToString
-  implicit lazy val offsetDateTime: LoggableEncoder[OffsetDateTime] = fromToString
-  implicit lazy val duration: LoggableEncoder[Duration]             = fromToString
+  implicit lazy val instant: LoggableEncoder[Instant]                = fromToString
+  implicit lazy val localDate: LoggableEncoder[LocalDate]            = fromToString
+  implicit lazy val localTime: LoggableEncoder[LocalTime]            = fromToString
+  implicit lazy val localDateTime: LoggableEncoder[LocalDateTime]    = fromToString
+  implicit lazy val zonedDateTime: LoggableEncoder[ZonedDateTime]    = fromToString
+  implicit lazy val offsetTime: LoggableEncoder[OffsetTime]          = fromToString
+  implicit lazy val offsetDateTime: LoggableEncoder[OffsetDateTime]  = fromToString
+  implicit lazy val jdkduration: LoggableEncoder[java.time.Duration] = fromToString
+}
+
+private[loggable] trait LoggableEncoderScalaDuration {
+  self: LoggableEncoder.type =>
+
+  implicit lazy val scalaFiniteDuration: LoggableEncoder[scala.concurrent.duration.FiniteDuration] = fromToString
+  implicit lazy val scalaDuration: LoggableEncoder[scala.concurrent.duration.Duration]             = fromToString
 }
 
 private[loggable] trait LoggableEncoderStdlib2 {
