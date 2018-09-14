@@ -1,5 +1,7 @@
 package com.emarsys.logger.loggable
 
+import java.time._
+
 import cats.syntax.all._
 import cats.{Contravariant, Show, Traverse}
 import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
@@ -11,30 +13,32 @@ import scala.language.implicitConversions
   def toLoggable(a: A): LoggableValue
 }
 
-object LoggableEncoder extends LoggableEncoderStdlib1 with LoggableEncoderStdlib2 with GenericLoggableEncoder {
-
+object LoggableEncoder
+    extends LoggableEncoderStdlib1
+    with LoggableEncoderDateTime
+    with LoggableEncoderStdlib2
+    with GenericLoggableEncoder {
 
   implicit val contravariantLoggableEncoder: Contravariant[LoggableEncoder] = new Contravariant[LoggableEncoder] {
     override def contramap[A, B](fa: LoggableEncoder[A])(f: B => A): LoggableEncoder[B] = b => fa.toLoggable(f(b))
   }
 
-  implicit val loggableValue: LoggableEncoder[LoggableValue] = identity[LoggableValue]
-  implicit val long: LoggableEncoder[Long]                   = LoggableIntegral(_)
-  implicit val double: LoggableEncoder[Double]               = LoggableFloating(_)
-  implicit val boolean: LoggableEncoder[Boolean]             = LoggableBoolean(_)
-  implicit val string: LoggableEncoder[String]               = LoggableString(_)
+  implicit lazy val loggableValue: LoggableEncoder[LoggableValue] = identity[LoggableValue]
+  implicit lazy val long: LoggableEncoder[Long]                   = LoggableIntegral(_)
+  implicit lazy val double: LoggableEncoder[Double]               = LoggableFloating(_)
+  implicit lazy val boolean: LoggableEncoder[Boolean]             = LoggableBoolean(_)
+  implicit lazy val string: LoggableEncoder[String]               = LoggableString(_)
 
-  def fromToString[A]: LoggableEncoder[A] = string.contramap[A](_.toString)
+  def fromToString[A]: LoggableEncoder[A]   = string.contramap[A](_.toString)
   def fromShow[A: Show]: LoggableEncoder[A] = string.contramap[A](_.show)
 
-
-  implicit val int: LoggableEncoder[Int]       = long.contramap(_.toLong)
-  implicit val short: LoggableEncoder[Short]   = long.contramap(_.toLong)
-  implicit val byte: LoggableEncoder[Byte]     = long.contramap(_.toLong)
-  implicit val unit: LoggableEncoder[Unit]     = long.contramap(_ => 1)
-  implicit val float: LoggableEncoder[Float]   = double.contramap(_.toDouble)
-  implicit val char: LoggableEncoder[Char]     = fromToString
-  implicit val symbol: LoggableEncoder[Symbol] = string.contramap(_.name)
+  implicit lazy val int: LoggableEncoder[Int]       = long.contramap(_.toLong)
+  implicit lazy val short: LoggableEncoder[Short]   = long.contramap(_.toLong)
+  implicit lazy val byte: LoggableEncoder[Byte]     = long.contramap(_.toLong)
+  implicit lazy val unit: LoggableEncoder[Unit]     = long.contramap(_ => 1)
+  implicit lazy val float: LoggableEncoder[Float]   = double.contramap(_.toDouble)
+  implicit lazy val char: LoggableEncoder[Char]     = fromToString
+  implicit lazy val symbol: LoggableEncoder[Symbol] = string.contramap(_.name)
 }
 
 private[loggable] trait LoggableEncoderStdlib1 {
@@ -56,6 +60,19 @@ private[loggable] trait LoggableEncoderStdlib1 {
 
   implicit def dict[A: LoggableEncoder]: LoggableEncoder[Map[String, A]] =
     m => LoggableObject(m.map { case (k, v) => (k, v.toLoggable) })
+}
+
+private[loggable] trait LoggableEncoderDateTime {
+  self: LoggableEncoder.type =>
+
+  implicit lazy val instant: LoggableEncoder[Instant]               = fromToString
+  implicit lazy val localDate: LoggableEncoder[LocalDate]           = fromToString
+  implicit lazy val localTime: LoggableEncoder[LocalTime]           = fromToString
+  implicit lazy val localDateTime: LoggableEncoder[LocalDateTime]   = fromToString
+  implicit lazy val zonedDateTime: LoggableEncoder[ZonedDateTime]   = fromToString
+  implicit lazy val offsetTime: LoggableEncoder[OffsetTime]         = fromToString
+  implicit lazy val offsetDateTime: LoggableEncoder[OffsetDateTime] = fromToString
+  implicit lazy val duration: LoggableEncoder[Duration]             = fromToString
 }
 
 private[loggable] trait LoggableEncoderStdlib2 {

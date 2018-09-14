@@ -1,9 +1,12 @@
 package com.emarsys.logger.loggable
 
+import java.time._
+
 import org.scalacheck.Prop.forAll
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.prop.Checkers
 import org.scalatest.{FreeSpec, Matchers}
+import com.emarsys.logger.testutil.Arbitraries._
 
 class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with TypeCheckedTripleEquals {
   import LoggableEncoder.ops._
@@ -117,6 +120,54 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
         import cats.instances.vector._
         check {
           forAll((v: Vector[Int]) => v.toLoggable === LoggableList(v.toList.map(_.toLoggable)))
+        }
+      }
+
+      "instant" in {
+        check {
+          forAll(instantGen)((dt: Instant) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "localDate" in {
+        check {
+          forAll(localDateGen)((dt: LocalDate) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "localTime" in {
+        check {
+          forAll(localTimeGen)((dt: LocalTime) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "localDateTime" in {
+        check {
+          forAll(localDateTimeGen)((dt: LocalDateTime) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "zonedDateTime" in {
+        check {
+          forAll(zonedDateTimeGen)((dt: ZonedDateTime) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "offsetDateTime" in {
+        check {
+          forAll(offsetDateTimeGen)((dt: OffsetDateTime) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "offsetTime" in {
+        check {
+          forAll(offsetTimeGen)((dt: OffsetTime) => dt.toLoggable === LoggableString(dt.toString))
+        }
+      }
+
+      "duration" in {
+        check {
+          forAll(durationGen)((dt: java.time.Duration) => dt.toLoggable === LoggableString(dt.toString))
         }
       }
     }
