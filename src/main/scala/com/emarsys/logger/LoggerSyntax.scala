@@ -12,26 +12,66 @@ trait LoggerSyntax {
   def unsafeLog(implicit logging: Logging[Id]): Logging[Id] = logging
 
   implicit class LogOps[F[_]: Logging: MonadError[?[_], Throwable], A](fa: F[A]) {
-    def logFailure(implicit ctx: LoggingContext): F[A] = fa onError {
-      case e: Throwable =>
-        log.error(e)
+    def logFailure(implicit ctx: LoggingContextMagnet[F]): F[A] = fa onError {
+      case error: Throwable =>
+        log.error(error)
     }
 
-    def logFailure(msg: => String)(implicit wlc: LoggingContextMagnet[F]): F[A] = fa onError {
-      case e: Throwable =>
-        log.error(e, msg)
+    def logFailure(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[A] = fa onError {
+      case error: Throwable =>
+        log.error(error, msg)
     }
 
-    def logFailure(createMsg: Throwable => String)(implicit wlc: LoggingContextMagnet[F]): F[A] = fa onError {
-      case e: Throwable =>
-        log.error(e, createMsg(e))
+    def logFailure(createMsg: Throwable => String)(implicit magnet: LoggingContextMagnet[F]): F[A] = fa onError {
+      case error: Throwable =>
+        log.error(error, createMsg(error))
     }
 
-    def logSuccess(msg: => String)(implicit wlc: LoggingContextMagnet[F]): F[A] = fa <* log.info(msg)
+    def logFailure(createMsg: Throwable => String, ctxExtender: (Throwable, LoggingContext) => LoggingContext)(
+        implicit magnet: LoggingContextMagnet[F]
+    ): F[A] =
+      fa onError {
+        case error: Throwable =>
+          magnet { ctx =>
+            log.error(error, createMsg(error))(ctxExtender(error, ctx))
+          }
+      }
 
-    def logSuccess(createMsg: A => String)(implicit wlc: LoggingContextMagnet[F]): F[A] = fa flatTap { value =>
+    def logFailure(msg: String, ctxExtender: (Throwable, LoggingContext) => LoggingContext)(
+        implicit magnet: LoggingContextMagnet[F]
+    ): F[A] =
+      fa onError {
+        case error: Throwable =>
+          magnet { ctx =>
+            log.error(error, msg)(ctxExtender(error, ctx))
+          }
+      }
+
+    def logSuccess(msg: String)(implicit magnet: LoggingContextMagnet[F]): F[A] = fa <* log.info(msg)
+
+    def logSuccess(createMsg: A => String)(implicit magnet: LoggingContextMagnet[F]): F[A] = fa flatTap { value =>
       log.info(createMsg(value))
     }
+
+    def logSuccess(createMsg: A => String, ctxExtender: (A, LoggingContext) => LoggingContext)(
+        implicit magnet: LoggingContextMagnet[F]
+    ): F[A] = fa flatTap { value =>
+      magnet { ctx =>
+        log.info(createMsg(value))(ctxExtender(value, ctx))
+      }
+    }
+
+    def logSuccess(msg: String, ctxExtender: (A, LoggingContext) => LoggingContext)(
+        implicit magnet: LoggingContextMagnet[F]
+    ): F[A] =
+      fa flatTap { value =>
+        magnet { ctx =>
+          log.info(msg)(ctxExtender(value, ctx))
+        }
+      }
+
+    def withContext(ctxExtender: LoggingContext => LoggingContext)(implicit ctx: Context[F]): F[A] =
+      extendContext(ctxExtender)(fa)
   }
 
   implicit class LogConverter[F[_], A](fa: F[A]) {
