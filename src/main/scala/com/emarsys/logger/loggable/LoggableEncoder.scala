@@ -1,9 +1,10 @@
 package com.emarsys.logger.loggable
 
 import cats.syntax.all._
-import cats.{Contravariant, Traverse}
+import cats.{Contravariant, Show, Traverse}
 import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
 import simulacrum.typeclass
+
 import scala.language.implicitConversions
 
 @typeclass trait LoggableEncoder[A] {
@@ -11,6 +12,7 @@ import scala.language.implicitConversions
 }
 
 object LoggableEncoder extends LoggableEncoderStdlib1 with LoggableEncoderStdlib2 with GenericLoggableEncoder {
+
 
   implicit val contravariantLoggableEncoder: Contravariant[LoggableEncoder] = new Contravariant[LoggableEncoder] {
     override def contramap[A, B](fa: LoggableEncoder[A])(f: B => A): LoggableEncoder[B] = b => fa.toLoggable(f(b))
@@ -22,12 +24,16 @@ object LoggableEncoder extends LoggableEncoderStdlib1 with LoggableEncoderStdlib
   implicit val boolean: LoggableEncoder[Boolean]             = LoggableBoolean(_)
   implicit val string: LoggableEncoder[String]               = LoggableString(_)
 
+  def fromToString[A]: LoggableEncoder[A] = string.contramap[A](_.toString)
+  def fromShow[A: Show]: LoggableEncoder[A] = string.contramap[A](_.show)
+
+
   implicit val int: LoggableEncoder[Int]       = long.contramap(_.toLong)
   implicit val short: LoggableEncoder[Short]   = long.contramap(_.toLong)
   implicit val byte: LoggableEncoder[Byte]     = long.contramap(_.toLong)
   implicit val unit: LoggableEncoder[Unit]     = long.contramap(_ => 1)
   implicit val float: LoggableEncoder[Float]   = double.contramap(_.toDouble)
-  implicit val char: LoggableEncoder[Char]     = string.contramap(_.toString)
+  implicit val char: LoggableEncoder[Char]     = fromToString
   implicit val symbol: LoggableEncoder[Symbol] = string.contramap(_.name)
 }
 
