@@ -13,7 +13,7 @@ class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTr
     "construct from LoggingContext" in {
       """
         |  val lc: LoggingContext = LoggingContext("")
-        |  getMagnet(lc)
+        |  getMagnet[Id](lc)
       """.stripMargin should compile
     }
 

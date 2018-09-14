@@ -21,7 +21,7 @@ lazy val `scala-logger` = (project in file("."))
       "-unchecked",
       "-Yno-adapted-args",
       "-Xlint:_,-type-parameter-shadow",
-//      "-Xsource:2.13", //TODO: fix cyclic instantiation compile error when passing LoggingContextMagnet explicitly
+      "-Xsource:2.13",
       "-Ywarn-dead-code",
       "-Ywarn-inaccessible",
       "-Ywarn-infer-any",
