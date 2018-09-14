@@ -1,6 +1,9 @@
+import org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.6",
-  organization := "com.emarsys"
+  organization := "com.emarsys",
+  scalafmtOnCompile := true
 )
 
 lazy val `scala-logger` = (project in file("."))
