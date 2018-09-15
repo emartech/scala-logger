@@ -1,9 +1,10 @@
 package com.emarsys.logger
 import cats.data.ReaderT
 import cats.{Applicative, Id, MonadError}
-import com.emarsys.logger.internal.LoggingContextMagnet
+import com.emarsys.logger.internal.{LoggingContextMagnet, VarArgLoggableEncoder}
+import com.emarsys.logger.loggable.{LoggableObject, LoggableValue}
 
-trait LoggerSyntax {
+trait LoggerSyntax extends VarArgLoggableEncoder {
   import cats.syntax.applicativeError._
   import cats.syntax.apply._
   import cats.syntax.flatMap._
@@ -72,10 +73,22 @@ trait LoggerSyntax {
 
     def withContext(ctxExtender: LoggingContext => LoggingContext)(implicit ctx: Context[F]): F[A] =
       extendContext(ctxExtender)(fa)
+
+    def withContext(params: (String, HasLoggableEncoder)*)(implicit ctx: Context[F]): F[A] =
+      extendContext(params: _*)(fa)
   }
 
   implicit class LogConverter[F[_], A](fa: F[A]) {
     def toLogged: Logged[F, A] = withContext(_ => fa)
+  }
+
+  implicit class LoggingContextOps(lc: LoggingContext) {
+    def addParameters(params: (String, HasLoggableEncoder)*): LoggingContext = {
+      val extendedLogData = params.asInstanceOf[Seq[(String, LoggableValue)]].foldLeft(lc.logData.obj) {
+        case (data, (key, value)) => data + ((key, value))
+      }
+      lc.copy(logData = LoggableObject(extendedLogData))
+    }
   }
 
   def withContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = ReaderT(block)
@@ -91,4 +104,7 @@ trait LoggerSyntax {
 
   def extendContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
     Context[F].local(ctxExtender)(fa)
+
+  def extendContext[F[_]: Context, A](params: (String, HasLoggableEncoder)*)(fa: => F[A]): F[A] =
+    extendContext(_.addParameters(params: _*))(fa)
 }
