@@ -7,7 +7,7 @@ Add to sbt:
 ```sbtshell
 resolvers += "Emarsys Commons" at "https://nexus.service.emarsys.net/repository/emartech" 
 
-libraryDependencies += "com.emarsys" %% "scala-logger" % "0.2.0"
+libraryDependencies += "com.emarsys" %% "scala-logger" % "0.2.3"
 ```
 
 ### Examples
