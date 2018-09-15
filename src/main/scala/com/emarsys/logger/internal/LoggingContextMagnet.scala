@@ -6,10 +6,12 @@ import com.emarsys.logger.{Context, LoggingContext}
 import scala.annotation.implicitNotFound
 import scala.language.implicitConversions
 
-@implicitNotFound(
-  msg =
-    "Unable to produce a LoggingContext. You might pass an (implicit ctx: LoggingContext) to your method or use the Context typeclass if ${F} is a monad."
-)
+@implicitNotFound("""
+  Cannot log without the means to obtain a LoggingContext.
+
+  You might pass an (implicit ctx: LoggingContext) to your method or use the
+  Context[${F}] typeclass in case ${F} has a Monad[${F}] instance.
+  """)
 trait LoggingContextMagnet[F[_]] {
   def apply[Result](f: LoggingContext => F[Unit]): F[Unit]
 }
