@@ -7,8 +7,17 @@ import cats.{Contravariant, Show, Traverse}
 import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
 import simulacrum.typeclass
 
+import scala.annotation.implicitNotFound
 import scala.language.implicitConversions
 
+@implicitNotFound("""
+  Cannot use a value of type ${A} as a log parameter, as no implicit
+  LoggableEncoder[${A}] instance is in scope.
+
+  If you wish to create a LoggableEncoder instance for your class, in case ${A}
+  is a case class or a sealed trait hierarchy, you may use the
+  LoggableEncoder.deriveLoggableEncoder method to automatically generate it.
+  """)
 @typeclass trait LoggableEncoder[A] {
   def toLoggable(a: A): LoggableValue
 }
