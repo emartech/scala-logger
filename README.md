@@ -1,4 +1,4 @@
-# Scala Logger
+# Scala Logger [![Build Status](https://travis-ci.org/emartech/scala-logger.svg?branch=master)](https://travis-ci.org/emartech/scala-logger)
 
 ## Usage
 
