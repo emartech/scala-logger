@@ -1,13 +1,11 @@
-# Scala Logger [![Build Status](https://travis-ci.org/emartech/scala-logger.svg?branch=master)](https://travis-ci.org/emartech/scala-logger)
+# Scala Logger [![Build Status](https://travis-ci.org/emartech/scala-logger.svg?branch=master)](https://travis-ci.org/emartech/scala-logger) [![Maven Central](https://img.shields.io/maven-central/v/com.emarsys/scala-logger_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.emarsys%22%20AND%20a:%22scala-logger_2.12%22)
 
 ## Usage
 
 Add to sbt:
 
 ```sbtshell
-resolvers += "Emarsys Commons" at "https://nexus.service.emarsys.net/repository/emartech" 
-
-libraryDependencies += "com.emarsys" %% "scala-logger" % "0.2.3"
+libraryDependencies += "com.emarsys" %% "scala-logger" % "0.3.1"
 ```
 
 ### Examples
@@ -37,8 +35,8 @@ Adding contextual information:
 ```scala
 import com.emarsys.logger.syntax._
 
-implicit val context: LoggingContext = 
-  LoggingContext("job1") <> 
+implicit val context: LoggingContext =
+  LoggingContext("job1") <>
     "id" -> 1 <>
     "customer" -> "Joe"
 
@@ -64,7 +62,7 @@ import com.emarsys.logger.syntax._
 
 def work[F[_]: Logging: Context](): F[Unit] = {
   extendContext(_ <> "id" -> 1) {
-    log[F].info("Typeclasses!")  
+    log[F].info("Typeclasses!")
   }
 }
 ```
