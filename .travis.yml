@@ -1,8 +1,30 @@
-udo: false
+sudo: false
 language: scala
 scala:
-  - 2.12.6
+- 2.12.6
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION test
+- sbt ++$TRAVIS_SCALA_VERSION test
 jdk:
-  - oraclejdk8
+- oraclejdk8
+
+before_install:
+- if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
+    openssl aes-256-cbc -K $encrypted_71e39febda61_key -iv $encrypted_71e39febda61_iv -in ci/secrets.tar.enc -out ci/secrets.tar -d;
+    tar xv -C ci -f ci/secrets.tar;
+  fi
+after_success:
+- if [ $TRAVIS_PULL_REQUEST = 'false' ]; then sbt ++$TRAVIS_SCALA_VERSION releaseEarly; fi
+
+env:
+  global:
+  - secure: QHfWxKyxGSATzBhvFQXZZ3D5RYy/aKWZUPuN1gDQk5aTzHcIJVGqt/DXAzwTmOB+yPzlIC09Bu/00zih0F5owk6mIL4B7uhZdVMRkT78LiIgeVnAgK5AqnwX3FRx3O2Qt/7r96HckGFs2YbwJTLy2kXPfvkALjsXoqlfF70GIiCsB9YmBVjq2IoFtBR5zg9+yJMDldEd8Bdvijxqv/LrCNnwUnr1X9UXGApf49X0uUP715Km2Sc3Ua4PP+gDRPyMrn7IqPhXJnqP9QTOkOHzDAgLUewDPCBh9mo5CKnnPaFPcyA+v5jANBjWUAic4loaj8aTCHlk8DT7lgKojoyIT8G46uIXHvzu9zpT4FVOdHAnndYbk3Rf256apVxp8vbc0Q60d5yBEqwZGbCIJmHsHkDl1fdVlc0YGWDX5ujMNPlwgY1ofseMUuVOnwbwJLH84VPRDsaKOHe4PXvNLjvVl+SAo12SQD+ZyvmB8VfqtzB9HY6pgzMsWj/m4J/hTUVi78THrncDUVJvR/Cv3mfzPiu3LaLOVpCLPS6x1cXFB6LhR6p2Ti6p6qgbJrtiPoUd3qfzeCQW6Vlj9UIfA8iheE5vBuyfum2DMoZHNRm6reHMQxpg2uL5lqcUVEjIbr9vd1r+gbofqHoRVzBuLAcGzojVXY1CHZIRNCohGleugRY=
+  - secure: kvs1tB+WTAsV0kznz727On6p48hbItMzyljazDsmqP6EOK/bZoimZ8XRxne+oK0SPruFDLk93gWUomaHUDVmuoAE/CD0Pq5nothiu8p86Arq8Ow8FM37Q33ErJZxATwObShG6hYBPB1sR6zuR85s3tLWXsxlD8s5NTT3sI69a4oFn5ib8Q76MicDe9BNO594+W1AKnlImg+j6IXzQf43tMOjoECbNu2WmoeD3JdmSrgzmbTLg2pGwCpICCd4PLNp2pUcQHsC7PzfBi3VZePtNDVlg51qRhUMJItv7aTWC5+x8r8wgyhaq3IekUL2K73K8bm97O8288kv0w4+OOPfqkRv5lPIvC/Igp3OvnsZNkXJA29VCWvWuU1L6Peo06NiH7yWom8dbCgecIP0DtKhd9qQib0s7Ssw5057QvUZReDL8bjMjawJ7faZ6uCED1gkmd+qe76y4h6Nht4/umD603ppYifohlvrMLhpmCIJ5jpCEv0MYkBZVoCjeld+oRVd4/3hj8sypayZokPVjHrfG8UVnHTYwA6+z1f511M1X5J2Yl3l4oUl5JIE0Hk92BhJBg3FU+6KrzBKDaCHne9NViNgxAuYIIy5sbxUKM3gJ43tMfPT+rPLohvPKjhsBY/SBSCjN3vox+NqJKJAtRFlmAwUF7qdtTNEIA8iNeB8YQM=
+  - secure: TK1EFCRfa8m4LeSCZmuiTP4HdPYPikFUwJRplmiSVmys/3iGGnfXMQv+7tatlbvjDvcfzd5yBJwyx1Z5C5skr37KMhJ9pjY5DxoHRLPWIQG8OJPkVUILz2TWHsONPgkgbN2vb2HwzqDbP4UNyqCymcy6bJAbgcErlV7SVHbksKexsrQUEPWQKlXyqeNDrxUS1di+fA7VEIGO7QokHla9AU7kwvjI0RNl14X5Jy54Gx/5LmrHgUuHh9tyLjGA/ux/LomsSpEENRsdX1P6rgh3A8iTOkgRmoHve1WrEIuqy23pvv4hBIGrzsGS/C3Rk6e2BeoeTr0jSNCWHU9jWEQ6fvvqiVCBb3+DWSfKWv8gSxsLlG6GIKR353UM/V/EIGpA6+2Lpaga70Lhh/F1gdZBFs/CL2twmD67Kjttwv4HkfnI0mzfKL54Y3y+0EZvIHkO97Mb7DgQI7WXHqLnSlUomY/0SQf8kdJzcPN/5UUHr7YymWTSh+ntEIN0oTq0GrXaSCtzA5Imfv+JIfVGFo+9EicO94LyFw3fq84YVg8iT4pPmfS50tVNi/y9yYnoJPhjAs5Zc7H6B5fxHWvmyW+NulSBIZgPJC49SCPH9Ii+iPIu38ms3ygNpZcXCYwnYBy5V8QNV4usWTmkMCjKc4yY3D3gCAo1/y/OkoAllbctH58=
+
+cache:
+  directories:
+  - "$HOME/.ivy2/cache"
+  - "$HOME/.sbt"
+before_cache:
+- find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
+- find $HOME/.sbt        -name "*.lock"               -print -delete
