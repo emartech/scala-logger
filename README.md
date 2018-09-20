@@ -61,7 +61,7 @@ import com.emarsys.logger.{Logging, Context}
 import com.emarsys.logger.syntax._
 
 def work[F[_]: Logging: Context](): F[Unit] = {
-  extendContext(_ <> "id" -> 1) {
+  extendContext("id" -> 1, "job" -> "job01") {
     log[F].info("Typeclasses!")
   }
 }
