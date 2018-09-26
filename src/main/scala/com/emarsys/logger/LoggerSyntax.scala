@@ -12,7 +12,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
   def log[F[_]](implicit logging: Logging[F]): Logging[F]   = logging
   def unsafeLog(implicit logging: Logging[Id]): Logging[Id] = logging
 
-  implicit class LogOps[F[_]: Logging: MonadError[?[_], Throwable], A](fa: F[A]) {
+  implicit class LoggingMonadErrorOps[F[_]: Logging: MonadError[?[_], Throwable], A](fa: F[A]) {
     def logFailure(implicit ctx: LoggingContextMagnet[F]): F[A] = fa onError {
       case error: Throwable =>
         log.error(error)
@@ -71,14 +71,17 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
         }
       }
 
-    def withModifiedContext(ctxExtender: LoggingContext => LoggingContext)(implicit ctx: Context[F]): F[A] =
+  }
+
+  implicit class ContextOps[F[_]: Context, A](fa: F[A]) {
+    def withModifiedContext(ctxExtender: LoggingContext => LoggingContext): F[A] =
       modifyContext(ctxExtender)(fa)
 
-    def withExtendedContext(params: (String, HasLoggableEncoder)*)(implicit ctx: Context[F]): F[A] =
+    def withExtendedContext(params: (String, HasLoggableEncoder)*): F[A] =
       extendContext(params: _*)(fa)
   }
 
-  implicit class LogConverter[F[_], A](fa: F[A]) {
+  implicit class LoggedOps[F[_], A](fa: F[A]) {
     def toLogged: Logged[F, A] = withContext(_ => fa)
   }
 

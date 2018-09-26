@@ -52,20 +52,23 @@ lazy val `scala-logger` = (project in file("."))
     }
   )
 
-inThisBuild(List(
-  licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
-  homepage := Some(url("https://github.com/emartech/scala-logger")),
-  developers := List(
-    Developer("doczir", "Robert Doczi", "doczi.r@gmail.com", url("https://github.com/doczir")),
-    Developer("miklos-martin", "Miklos Martin", "miklos.martin@gmail.com", url("https://github.com/miklos-martin"))
-  ),
-  scmInfo := Some(ScmInfo(url("https://github.com/emartech/scala-logger"), "scm:git:git@github.com:emartech/scala-logger.git")),
-
-  // These are the sbt-release-early settings to configure
-  pgpPublicRing := file("./ci/local.pubring.asc"),
-  pgpSecretRing := file("./ci/local.secring.asc"),
-  releaseEarlyWith := SonatypePublisher
-))
+inThisBuild(
+  List(
+    licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
+    homepage := Some(url("https://github.com/emartech/scala-logger")),
+    developers := List(
+      Developer("doczir", "Robert Doczi", "doczi.r@gmail.com", url("https://github.com/doczir")),
+      Developer("miklos-martin", "Miklos Martin", "miklos.martin@gmail.com", url("https://github.com/miklos-martin"))
+    ),
+    scmInfo := Some(
+      ScmInfo(url("https://github.com/emartech/scala-logger"), "scm:git:git@github.com:emartech/scala-logger.git")
+    ),
+    // These are the sbt-release-early settings to configure
+    pgpPublicRing := file("./ci/local.pubring.asc"),
+    pgpSecretRing := file("./ci/local.secring.asc"),
+    releaseEarlyWith := SonatypePublisher
+  )
+)
 
 addCompilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.6")
 addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.0" cross CrossVersion.full)
