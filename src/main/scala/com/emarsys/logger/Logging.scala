@@ -17,7 +17,7 @@ trait Logging[F[_]] {
   def warn(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(logWarn(msg, _))
 
-  def warn(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = error(cause, "Warn")
+  def warn(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = warn(cause, "Warn")
 
   def error(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(ctx => logError(msg, errorContext(cause, ctx)))
