@@ -33,7 +33,6 @@ lazy val `scala-logger` = (project in file("."))
       "-Ywarn-numeric-widen",
       "-Ywarn-value-discard",
       "-Ywarn-extra-implicit",
-      "-Ywarn-unused:_,imports",
       "-Ywarn-unused:imports",
       "-opt-warnings"
     ),
