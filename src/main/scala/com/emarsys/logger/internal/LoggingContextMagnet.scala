@@ -33,7 +33,7 @@ object LoggingContextMagnet {
       M: Monad[F]
   ): LoggingContextMagnet[F] =
     new LoggingContextMagnet[F] {
-      override def apply[Result](f: LoggingContext => F[Unit]): F[Unit] = M.flatMap(C.ask.ask)(f)
+      override def apply[Result](f: LoggingContext => F[Unit]): F[Unit] = M.flatMap(C.ask)(f)
     }
 
 }

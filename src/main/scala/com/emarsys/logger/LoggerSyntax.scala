@@ -98,7 +98,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
 
   def getReaderContext[F[_]: Applicative]: Logged[F, LoggingContext] = ReaderT.ask[F, LoggingContext]
 
-  def getContext[F[_]: Context]: F[LoggingContext] = Context[F].ask.ask
+  def getContext[F[_]: Context]: F[LoggingContext] = Context[F].ask
 
   def extendReaderContext[F[_], A](
       ctxExtender: LoggingContext => LoggingContext
