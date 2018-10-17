@@ -5,7 +5,7 @@
 Add to sbt:
 
 ```sbtshell
-libraryDependencies += "com.emarsys" %% "scala-logger" % "0.3.1"
+libraryDependencies += "com.emarsys" %% "scala-logger" % "0.4.1"
 ```
 
 ### Examples
