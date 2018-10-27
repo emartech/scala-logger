@@ -1,6 +1,6 @@
 package com.emarsys.logger.internal
 
-import com.emarsys.logger.{LoggingContext, loggable}
+import com.emarsys.logger.LoggingContext
 import com.emarsys.logger.loggable._
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{Matchers, WordSpec}

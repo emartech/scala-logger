@@ -2,7 +2,6 @@ package com.emarsys.logger
 
 import java.util.UUID
 
-import cats.effect.IO
 import ch.qos.logback.classic.{Level, Logger}
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender

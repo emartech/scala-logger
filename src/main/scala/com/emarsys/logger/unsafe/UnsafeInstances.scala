@@ -3,8 +3,6 @@ package com.emarsys.logger.unsafe
 import cats.{Applicative, Id}
 import com.emarsys.logger.Logging
 
-import scala.language.implicitConversions
-
 trait UnsafeInstances extends UnsafeIdLoggingInstance {
   import cats.syntax.applicative._
 
