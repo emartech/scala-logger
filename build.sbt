@@ -6,10 +6,9 @@ lazy val commonSettings = Seq(
   scalafmtOnCompile := true
 )
 
-// logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger 
+// logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
 // instead of a proper logback Logger instance
-parallelExecution in ThisBuild := false 
-
+parallelExecution in ThisBuild := false
 
 lazy val `scala-logger` = (project in file("."))
   .settings(commonSettings: _*)
