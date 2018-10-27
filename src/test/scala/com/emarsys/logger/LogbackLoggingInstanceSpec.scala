@@ -2,7 +2,7 @@ package com.emarsys.logger
 
 import cats.Id
 import ch.qos.logback.classic.{Level, Logger}
-import com.emarsys.logger.loggable.{LoggableIntegral, LoggableObject}
+import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender
 import net.logstash.logback.marker.Markers
 import org.scalactic.TypeCheckedTripleEquals
@@ -62,12 +62,40 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     }
 
     it should "log the extended context" in new LoggingScope {
-      val ctx = LoggingContext("trid", LoggableObject(Map("id" -> LoggableIntegral(1))))
+      val ctx = LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1)))
       logFn(logger, "message", ctx)
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
       marker(1) should ===(Markers.appendEntries(Map("id" -> 1L).asJava))
+    }
+
+    it should "log nested objects in ctx" in new LoggingScope {
+      val ctx = LoggingContext("trid", LoggableObject("obj" -> LoggableObject("id" -> LoggableIntegral(1))))
+      logFn(logger, "message", ctx)
+
+      private val marker = flattenMarkers(appender.events.head.getMarker)
+
+      marker(1).toString should ===("{obj={id=1}}")
+    }
+
+    it should "log list of objects in ctx" in new LoggingScope {
+      val ctx = LoggingContext(
+        "trid",
+        LoggableObject(
+          Map(
+            "list" -> LoggableList(
+              LoggableObject("id" -> LoggableIntegral(1)),
+              LoggableObject("id" -> LoggableIntegral(2))
+            )
+          )
+        )
+      )
+      logFn(logger, "message", ctx)
+
+      private val marker = flattenMarkers(appender.events.head.getMarker)
+
+      marker(1).toString should ===("{list=[{id=1}, {id=2}]}")
     }
   }
 

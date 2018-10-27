@@ -14,5 +14,5 @@ case class LoggingContext private (transactionID: String, logData: LoggableObjec
 }
 
 object LoggingContext {
-  def apply(transactionID: String): LoggingContext = LoggingContext(transactionID, LoggableObject(Map.empty))
+  def apply(transactionID: String): LoggingContext = LoggingContext(transactionID, LoggableObject.empty)
 }

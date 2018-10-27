@@ -192,7 +192,7 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
 
         val simple = Simple(42)
 
-        encoder.toLoggable(simple) should ===(LoggableObject(Map("i" -> LoggableIntegral(42))))
+        encoder.toLoggable(simple) should ===(LoggableObject("i" -> LoggableIntegral(42)))
       }
 
       "nested case class" in {
@@ -205,7 +205,7 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
         val nested = Nested(Simple(42))
 
         nestedEncoder.toLoggable(nested) should ===(
-          LoggableObject(Map("s" -> LoggableObject(Map("i" -> LoggableIntegral(42)))))
+          LoggableObject("s" -> LoggableObject("i" -> LoggableIntegral(42)))
         )
       }
 
@@ -216,8 +216,8 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
 
         implicit val encoder: LoggableEncoder[T] = LoggableEncoder.deriveLoggableEncoder
 
-        encoder.toLoggable(A(42)) should ===(LoggableObject(Map("x"   -> LoggableIntegral(42))))
-        encoder.toLoggable(B("42")) should ===(LoggableObject(Map("y" -> LoggableString("42"))))
+        encoder.toLoggable(A(42)) should ===(LoggableObject("x"   -> LoggableIntegral(42)))
+        encoder.toLoggable(B("42")) should ===(LoggableObject("y" -> LoggableString("42")))
       }
     }
 
@@ -239,7 +239,7 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
 
         val nested = Nested(null)
 
-        nestedEncoder.toLoggable(nested) should ===(LoggableObject(Map("s" -> LoggableNil)))
+        nestedEncoder.toLoggable(nested) should ===(LoggableObject("s" -> LoggableNil))
       }
 
       "ADT" in {
