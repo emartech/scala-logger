@@ -2,7 +2,7 @@ package com.emarsys.logger
 
 import com.emarsys.logger.loggable.{LoggableEncoder, LoggableObject}
 
-case class LoggingContext private (transactionID: String, logData: LoggableObject) {
+case class LoggingContext private (transactionId: String, logData: LoggableObject) {
   import cats.implicits._
   import LoggableEncoder.ops._
 
@@ -14,5 +14,5 @@ case class LoggingContext private (transactionID: String, logData: LoggableObjec
 }
 
 object LoggingContext {
-  def apply(transactionID: String): LoggingContext = LoggingContext(transactionID, LoggableObject.empty)
+  def apply(transactionId: String): LoggingContext = LoggingContext(transactionId, LoggableObject.empty)
 }
