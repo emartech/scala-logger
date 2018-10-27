@@ -39,7 +39,7 @@ class LoggingSpec extends WordSpec with Matchers {
         |import cats.instances.future._
         |import com.emarsys.logger.implicits._
         |
-        |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO]("default")
+        |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO, IO]("default").unsafeRunSync()
         |implicit val lc: LoggingContext = LoggingContext("")
         |
         |log[IO].warn("oh noe")
@@ -77,7 +77,7 @@ class LoggingSpec extends WordSpec with Matchers {
         |import cats.effect.IO
         |import com.emarsys.logger.implicits._
         |
-        |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO]("default")
+        |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO, IO]("default").unsafeRunSync()
         |type LoggedIO[A] = Logged[IO, A]
         |
         |log[LoggedIO].warn("oh noe")

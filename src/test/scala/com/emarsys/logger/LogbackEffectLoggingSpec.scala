@@ -9,7 +9,7 @@ class LogbackEffectLoggingSpec extends FlatSpec with Matchers with TypeCheckedTr
 
   override def runF(f: IO[Unit]): Unit = f.unsafeRunSync()
 
-  override def createLogger(name: String): Logging[IO] = Logging.createEffectLogger(name)
+  override def createLogger(name: String): Logging[IO] = Logging.createEffectLogger[IO, IO](name).unsafeRunSync()
 
   "Logging.debug" should behave like simpleLog(Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg)(ctx) })
 

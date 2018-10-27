@@ -53,7 +53,8 @@ object Logging {
     override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = logFn(level, msg, ctx)
   }
 
-  def createEffectLogger[F[_]: Sync](name: String): Logging[F] = new LogbackEffectLogging[F](name)
+  def createEffectLogger[F[_]: Sync, G[_]: Sync](name: String): G[Logging[F]] =
+    Sync[G].delay(new LogbackEffectLogging[F](name))
 
   def createUnsafeLogger(name: String): Logging[Id] = new UnsafeLogstashLogging(name)
 }
