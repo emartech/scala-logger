@@ -1,12 +1,11 @@
 package com.emarsys.logger
 
+import cats.Id
 import cats.effect.Sync
-import cats.{Applicative, Id}
-import com.emarsys.logger.internal.{LoggingContextMagnet, LoggingContextUtil}
+import com.emarsys.logger.internal.LoggingContextMagnet
 import com.emarsys.logger.levels.LogLevel
 import com.emarsys.logger.loggable._
-import net.logstash.logback.marker.LogstashMarker
-import org.slf4j.{Logger, LoggerFactory}
+import com.emarsys.logger.unsafe.UnsafeLogstashLogging
 
 trait Logging[F[_]] {
   def debug(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
@@ -48,39 +47,13 @@ trait Logging[F[_]] {
   }
 }
 
-object Logging extends ApplicativeLogging {
+object Logging {
 
   def create[F[_]](logFn: (LogLevel, String, LoggingContext) => F[Unit]): Logging[F] = new Logging[F] {
     override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = logFn(level, msg, ctx)
   }
 
-  implicit def defaultLogging[F[_]: Sync](implicit ul: Logging[Id]): Logging[F] = create[F] { (level, msg, ctx) =>
-    Sync[F].delay(ul.log(level, msg, ctx))
-  }
-}
+  def createEffectLogger[F[_]: Sync](name: String): Logging[F] = new LogbackEffectLogging[F](name)
 
-trait UnsafeLogstashLogging {
-
-  implicit lazy val unsafeLogstashLogging: Logging[Id] = {
-    lazy val logger: Logger = LoggerFactory.getLogger("default")
-    Logging.create[Id] {
-      case (LogLevel.DEBUG, msg, ctx) =>
-        if (logger.isDebugEnabled()) logger.debug(LoggingContextUtil.toMarker(ctx), msg)
-      case (LogLevel.INFO, msg, ctx) =>
-        if (logger.isInfoEnabled()) logger.info(LoggingContextUtil.toMarker(ctx), msg)
-      case (LogLevel.WARN, msg, ctx) =>
-        if (logger.isWarnEnabled()) logger.warn(LoggingContextUtil.toMarker(ctx), msg)
-      case (LogLevel.ERROR, msg, ctx) =>
-        if (logger.isErrorEnabled()) logger.error(LoggingContextUtil.toMarker(ctx), msg)
-    }
-  }
-}
-
-trait ApplicativeLogging extends UnsafeLogstashLogging {
-  import cats.syntax.applicative._
-
-  implicit def defaultApplicativeLogging[F[_]: Applicative](implicit ul: Logging[Id]): Logging[F] =
-    Logging.create[F] { (level, msg, ctx) =>
-      ul.log(level, msg, ctx).pure
-    }
+  def createUnsafeLogger(name: String): Logging[Id] = new UnsafeLogstashLogging(name)
 }

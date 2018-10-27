@@ -1,6 +1,8 @@
 package com.emarsys.logger
 
-import cats.Id
+import java.util.UUID
+
+import cats.effect.IO
 import ch.qos.logback.classic.{Level, Logger}
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender
@@ -11,59 +13,40 @@ import org.slf4j.{LoggerFactory, Marker}
 
 import scala.collection.JavaConverters._
 
-class LogbackLoggingInstanceSpec extends FlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior {
+trait LoggingBehavior[F[_]] { this: FlatSpec with Matchers with TypeCheckedTripleEquals =>
+  type SimpleLogFn       = (Logging[F], String, LoggingContext) => F[Unit]
+  type ErrorLogFn        = (Logging[F], Throwable, LoggingContext) => F[Unit]
+  type ErrorLogWithMsgFn = (Logging[F], Throwable, String, LoggingContext) => F[Unit]
 
-  "Logging.debug" should behave like simpleLog(Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg)(ctx) })
-
-  "Logging.info" should behave like simpleLog(Level.INFO, { case (logger, msg, ctx) => logger.info(msg)(ctx) })
-
-  "Logging.warn" should behave like simpleLog(Level.WARN, { case (logger, msg, ctx) => logger.warn(msg)(ctx) })
-
-  it should behave like errorLog(
-    { case (logger, error, ctx)          => logger.warn(error)(ctx) },
-    { case (logger, error, message, ctx) => logger.warn(error, message)(ctx) }
-  )
-
-  "Logging.error" should behave like simpleLog(Level.ERROR, { case (logger, msg, ctx) => logger.error(msg)(ctx) })
-
-  it should behave like errorLog(
-    { case (logger, error, ctx)          => logger.error(error)(ctx) },
-    { case (logger, error, message, ctx) => logger.error(error, message)(ctx) }
-  )
-
-}
-
-trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEquals =>
-  type SimpleLogFn       = (Logging[Id], String, LoggingContext) => Unit
-  type ErrorLogFn        = (Logging[Id], Throwable, LoggingContext) => Unit
-  type ErrorLogWithMsgFn = (Logging[Id], Throwable, String, LoggingContext) => Unit
+  def runF(f: F[Unit]): Unit
+  def createLogger(name: String): Logging[F]
 
   def simpleLog(level: Level, logFn: SimpleLogFn): Unit = {
 
     it should "log with the correct level" in new LoggingScope {
       val ctx = LoggingContext("trid")
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       appender.events.head.getLevel should ===(level)
     }
 
     it should "log the correct message" in new LoggingScope {
       val ctx = LoggingContext("trid")
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       appender.events.head.getMessage should ===("message")
     }
 
     it should "log the transaction id" in new LoggingScope {
       val ctx = LoggingContext("trid")
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       appender.events.head.getMarker should ===(Markers.append("transactionId", "trid"))
     }
 
     it should "log the extended context" in new LoggingScope {
       val ctx = LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1)))
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
@@ -72,7 +55,7 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
 
     it should "log nested objects in ctx" in new LoggingScope {
       val ctx = LoggingContext("trid", LoggableObject("obj" -> LoggableObject("id" -> LoggableIntegral(1))))
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
@@ -91,7 +74,7 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
           )
         )
       )
-      logFn(logger, "message", ctx)
+      runF(logFn(logger, "message", ctx))
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
@@ -103,7 +86,7 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     it should "log the error in the context" in new LoggingScope {
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      log(logger, error, ctx)
+      runF(log(logger, error, ctx))
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
@@ -122,7 +105,7 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     it should "log the error in the context even when logging a message" in new LoggingScope {
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      logWithMsgFn(logger, error, "message", ctx)
+      runF(logWithMsgFn(logger, error, "message", ctx))
 
       private val marker = flattenMarkers(appender.events.head.getMarker)
 
@@ -141,7 +124,7 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
     it should "log the correct message even when logging error" in new LoggingScope {
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      logWithMsgFn(logger, error, "message", ctx)
+      runF(logWithMsgFn(logger, error, "message", ctx))
 
       appender.events.head.getMessage should ===("message")
     }
@@ -157,12 +140,13 @@ trait LoggingBehavior { this: FlatSpec with Matchers with TypeCheckedTripleEqual
 
   trait LoggingScope {
 
-    val logger: Logging[Id] = Logging.unsafeLogstashLogging
+    val loggerName         = UUID.randomUUID().toString.take(8)
+    val logger: Logging[F] = createLogger(loggerName)
 
     val appender = new TestAppender
     appender.start()
 
-    private val underlyingLogger = LoggerFactory.getLogger("default").asInstanceOf[Logger]
+    private val underlyingLogger = LoggerFactory.getLogger(loggerName).asInstanceOf[Logger]
     underlyingLogger.detachAndStopAllAppenders()
     underlyingLogger.addAppender(appender)
   }

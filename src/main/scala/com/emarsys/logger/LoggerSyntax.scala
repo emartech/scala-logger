@@ -9,8 +9,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
   import cats.syntax.apply._
   import cats.syntax.flatMap._
 
-  def log[F[_]](implicit logging: Logging[F]): Logging[F]   = logging
-  def unsafeLog(implicit logging: Logging[Id]): Logging[Id] = logging
+  def log[F[_]](implicit logging: Logging[F]): Logging[F] = logging
 
   implicit class LoggingMonadErrorOps[F[_]: Logging: MonadError[?[_], Throwable], A](fa: F[A]) {
     def logFailure(implicit ctx: LoggingContextMagnet[F]): F[A] = fa onError {

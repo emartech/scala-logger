@@ -10,6 +10,8 @@ class LoggingSpec extends WordSpec with Matchers {
       """
         |import cats.Id
         |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.unsafe.implicits._
+        |
         |implicit val lc: LoggingContext = LoggingContext("")
         |
         |log[Id].warn("oh noe")
@@ -22,6 +24,8 @@ class LoggingSpec extends WordSpec with Matchers {
         |import scala.concurrent.ExecutionContext.Implicits.global
         |import cats.instances.future._
         |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.unsafe.implicits._
+        |
         |implicit val lc: LoggingContext = LoggingContext("")
         |
         |log[Future].warn("oh noe")
@@ -34,6 +38,8 @@ class LoggingSpec extends WordSpec with Matchers {
         |import scala.concurrent.ExecutionContext.Implicits.global
         |import cats.instances.future._
         |import com.emarsys.logger.implicits._
+        |
+        |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO]("default")
         |implicit val lc: LoggingContext = LoggingContext("")
         |
         |log[IO].warn("oh noe")
@@ -44,6 +50,7 @@ class LoggingSpec extends WordSpec with Matchers {
       """
         |import cats.Id
         |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.unsafe.implicits._
         |
         |type LoggedId[A] = Logged[Id, A]
         |
@@ -57,6 +64,7 @@ class LoggingSpec extends WordSpec with Matchers {
         |import scala.concurrent.ExecutionContext.Implicits.global
         |import cats.instances.future._
         |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.unsafe.implicits._
         |
         |type LoggedFuture[A] = Logged[Future, A]
         |
@@ -67,10 +75,9 @@ class LoggingSpec extends WordSpec with Matchers {
     "compile with Logged[IO]" in {
       """
         |import cats.effect.IO
-        |import scala.concurrent.ExecutionContext.Implicits.global
-        |import cats.instances.future._
         |import com.emarsys.logger.implicits._
         |
+        |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO]("default")
         |type LoggedIO[A] = Logged[IO, A]
         |
         |log[LoggedIO].warn("oh noe")
