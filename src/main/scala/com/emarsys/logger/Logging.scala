@@ -2,7 +2,7 @@ package com.emarsys.logger
 
 import cats.effect.Sync
 import cats.{Applicative, Id}
-import com.emarsys.logger.internal.LoggingContextMagnet
+import com.emarsys.logger.internal.{LoggingContextMagnet, LoggingContextUtil}
 import com.emarsys.logger.levels.LogLevel
 import com.emarsys.logger.loggable._
 import net.logstash.logback.marker.LogstashMarker
@@ -61,36 +61,17 @@ object Logging extends ApplicativeLogging {
 
 trait UnsafeLogstashLogging {
 
-  import net.logstash.logback.marker.Markers._
-
-  import scala.collection.JavaConverters._
-
-  private def context(ctx: LoggingContext): LogstashMarker = {
-    append("transactionId", ctx.transactionID) and appendEntries(toJava(ctx.logData.obj))
-  }
-
-  private def toJava(logData: Map[String, LoggableValue]): java.util.Map[_, _] = logData.mapValues(toJava).asJava
-  private def toJava(lv: LoggableValue): Any = lv match {
-    case LoggableIntegral(value) => value
-    case LoggableFloating(value) => value
-    case LoggableString(value)   => value
-    case LoggableBoolean(value)  => value
-    case LoggableList(list)      => list.map(toJava).asJava
-    case LoggableObject(obj)     => obj.mapValues(toJava).asJava
-    case LoggableNil             => null
-  }
-
   implicit lazy val unsafeLogstashLogging: Logging[Id] = {
     lazy val logger: Logger = LoggerFactory.getLogger("default")
     Logging.create[Id] {
       case (LogLevel.DEBUG, msg, ctx) =>
-        if (logger.isDebugEnabled()) logger.debug(context(ctx), msg)
+        if (logger.isDebugEnabled()) logger.debug(LoggingContextUtil.toMarker(ctx), msg)
       case (LogLevel.INFO, msg, ctx) =>
-        if (logger.isInfoEnabled()) logger.info(context(ctx), msg)
+        if (logger.isInfoEnabled()) logger.info(LoggingContextUtil.toMarker(ctx), msg)
       case (LogLevel.WARN, msg, ctx) =>
-        if (logger.isWarnEnabled()) logger.warn(context(ctx), msg)
+        if (logger.isWarnEnabled()) logger.warn(LoggingContextUtil.toMarker(ctx), msg)
       case (LogLevel.ERROR, msg, ctx) =>
-        if (logger.isErrorEnabled()) logger.error(context(ctx), msg)
+        if (logger.isErrorEnabled()) logger.error(LoggingContextUtil.toMarker(ctx), msg)
     }
   }
 }
