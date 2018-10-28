@@ -13,11 +13,23 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
 
   def log[F[_]](implicit logging: Logging[F]): Logging[F] = logging
 
-  implicit final def toLoggingContextOps(lc: LoggingContext): LoggingContextOps = new LoggingContextOps(lc)
-
   implicit final def toLoggingOps[F[_], A](fa: F[A]): LoggingOps[F, A] = new LoggingOps(fa)
 
   implicit final def toLoggedOps[F[_], A](fa: F[A]): LoggedOps[F, A] = new LoggedOps(fa)
+
+  implicit class LoggingContextOps(lc: LoggingContext) {
+    def addParameters(params: (String, HasLoggableEncoder)*): LoggingContext = {
+      val extendedLogData = params.asInstanceOf[Seq[(String, LoggableValue)]].foldLeft(lc.logData.obj) {
+        case (data, (key, value)) => data + ((key, value))
+      }
+      lc.copy(logData = LoggableObject(extendedLogData))
+    }
+  }
+
+  implicit class ContextExtensionOps[F[_], A](fa: F[A]) {
+    def withExtendedContext(params: (String, HasLoggableEncoder)*)(implicit context: Context[F]): F[A] =
+      extendContext(params: _*)(fa)
+  }
 
   def withContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = ReaderT(block)
 
@@ -33,7 +45,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
   def modifyContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
     Context[F].local(ctxExtender)(fa)
 
-  def extendContext[F[_]: Context, A](params: (String, LoggingContextOpsImpl.HasLoggableEncoder)*)(fa: => F[A]): F[A] =
+  def extendContext[F[_]: Context, A](params: (String, HasLoggableEncoder)*)(fa: => F[A]): F[A] =
     modifyContext(_.addParameters(params: _*))(fa)
 }
 
@@ -117,26 +129,6 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
 
   def withModifiedContext(ctxExtender: LoggingContext => LoggingContext)(implicit context: Context[F]): F[A] =
     Context[F].local(ctxExtender)(fa)
-
-  def withExtendedContext(
-      params: (String, LoggingContextOpsImpl.HasLoggableEncoder)*
-  )(implicit context: Context[F]): F[A] =
-    withModifiedContext(LoggingContextOpsImpl.addParameters(_)(params: _*))
-
-}
-
-final class LoggingContextOps(val lc: LoggingContext) extends AnyVal {
-  def addParameters(params: (String, LoggingContextOpsImpl.HasLoggableEncoder)*): LoggingContext =
-    LoggingContextOpsImpl.addParameters(lc)(params: _*)
-}
-
-private object LoggingContextOpsImpl extends VarArgLoggableEncoder {
-  def addParameters(lc: LoggingContext)(params: (String, HasLoggableEncoder)*): LoggingContext = {
-    val extendedLogData = params.asInstanceOf[Seq[(String, LoggableValue)]].foldLeft(lc.logData.obj) {
-      case (data, (key, value)) => data + ((key, value))
-    }
-    lc.copy(logData = LoggableObject(extendedLogData))
-  }
 }
 
 final class LoggedOps[F[_], A](val fa: F[A]) extends AnyVal {
