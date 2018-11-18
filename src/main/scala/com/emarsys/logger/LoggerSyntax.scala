@@ -1,4 +1,5 @@
 package com.emarsys.logger
+
 import cats.data.ReaderT
 import cats.{Applicative, MonadError}
 import com.emarsys.logger.internal.{LoggingContextMagnet, VarArgLoggableEncoder}
