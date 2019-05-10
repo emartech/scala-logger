@@ -16,7 +16,7 @@ object LoggingContextUtil {
     if (contextualData.isEmpty) {
       transactionIdMarker
     } else {
-      transactionIdMarker and appendEntries(toJava(contextualData))
+      transactionIdMarker.and(appendEntries(toJava(contextualData)))
     }
   }
 

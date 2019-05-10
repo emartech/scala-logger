@@ -8,6 +8,7 @@ import com.emarsys.logger.loggable._
 import com.emarsys.logger.unsafe.UnsafeLogstashLogging
 
 trait Logging[F[_]] {
+
   def debug(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     magnet(log(LogLevel.DEBUG, msg, _))
 
@@ -49,9 +50,8 @@ trait Logging[F[_]] {
 
 object Logging {
 
-  def create[F[_]](logFn: (LogLevel, String, LoggingContext) => F[Unit]): Logging[F] = new Logging[F] {
-    override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = logFn(level, msg, ctx)
-  }
+  def create[F[_]](logFn: (LogLevel, String, LoggingContext) => F[Unit]): Logging[F] =
+    (level: LogLevel, msg: String, ctx: LoggingContext) => logFn(level, msg, ctx)
 
   def createEffectLogger[F[_]: Sync, G[_]: Sync](name: String): G[Logging[F]] =
     Sync[G].delay(new LogbackEffectLogging[F](name))

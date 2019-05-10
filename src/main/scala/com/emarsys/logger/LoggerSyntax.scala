@@ -19,6 +19,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
   implicit final def toLoggedOps[F[_], A](fa: F[A]): LoggedOps[F, A] = new LoggedOps(fa)
 
   implicit class LoggingContextOps(lc: LoggingContext) {
+
     def addParameters(params: (String, HasLoggableEncoder)*): LoggingContext = {
       val extendedLogData = params.asInstanceOf[Seq[(String, LoggableValue)]].foldLeft(lc.logData.obj) {
         case (data, (key, value)) => data + ((key, value))
@@ -28,6 +29,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
   }
 
   implicit class ContextExtensionOps[F[_], A](fa: F[A]) {
+
     def withExtendedContext(params: (String, HasLoggableEncoder)*)(implicit context: Context[F]): F[A] =
       extendContext(params: _*)(fa)
   }
@@ -51,22 +53,23 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
 }
 
 final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
+
   def logFailure(implicit logging: Logging[F], me: MonadError[F, Throwable], ctx: LoggingContextMagnet[F]): F[A] =
-    fa onError {
+    fa.onError {
       case error: Throwable =>
         logging.error(error)
     }
 
   def logFailure(
       msg: => String
-  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa onError {
+  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa.onError {
     case error: Throwable =>
       logging.error(error, msg)
   }
 
   def logFailure(
       createMsg: Throwable => String
-  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa onError {
+  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa.onError {
     case error: Throwable =>
       logging.error(error, createMsg(error))
   }
@@ -76,7 +79,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
       me: MonadError[F, Throwable],
       magnet: LoggingContextMagnet[F]
   ): F[A] =
-    fa onError {
+    fa.onError {
       case error: Throwable =>
         magnet { ctx =>
           logging.error(error, createMsg(error))(ctxExtender(error, ctx))
@@ -88,7 +91,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
       me: MonadError[F, Throwable],
       magnet: LoggingContextMagnet[F]
   ): F[A] =
-    fa onError {
+    fa.onError {
       case error: Throwable =>
         magnet { ctx =>
           logging.error(error, msg)(ctxExtender(error, ctx))
@@ -102,7 +105,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
 
   def logSuccess(
       createMsg: A => String
-  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa flatTap {
+  )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] = fa.flatTap {
     value =>
       logging.info(createMsg(value))
   }
@@ -111,7 +114,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
       implicit logging: Logging[F],
       me: MonadError[F, Throwable],
       magnet: LoggingContextMagnet[F]
-  ): F[A] = fa flatTap { value =>
+  ): F[A] = fa.flatTap { value =>
     magnet { ctx =>
       logging.info(createMsg(value))(ctxExtender(value, ctx))
     }
@@ -122,7 +125,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
       me: MonadError[F, Throwable],
       magnet: LoggingContextMagnet[F]
   ): F[A] =
-    fa flatTap { value =>
+    fa.flatTap { value =>
       magnet { ctx =>
         logging.info(msg)(ctxExtender(value, ctx))
       }
