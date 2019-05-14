@@ -5,7 +5,6 @@ import cats.{Applicative, MonadError}
 import com.emarsys.logger.internal.{LoggingContextMagnet, VarArgLoggableEncoder}
 import com.emarsys.logger.loggable.{LoggableObject, LoggableValue}
 import cats.syntax.applicativeError._
-import cats.syntax.apply._
 import cats.syntax.flatMap._
 
 import scala.language.implicitConversions
@@ -101,7 +100,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
   def logSuccess(
       msg: String
   )(implicit logging: Logging[F], me: MonadError[F, Throwable], magnet: LoggingContextMagnet[F]): F[A] =
-    fa <* logging.info(msg)
+    fa.flatTap(_ => logging.info(msg))
 
   def logSuccess(
       createMsg: A => String
