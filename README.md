@@ -28,7 +28,7 @@ import com.emarsys.logger.unsafe.implicits._
 
 val context = LoggingContext("job1")
 
-unsafeLog.info("This executes immediately!")
+unsafeLog.info("This executes immediately!")(context)
 ```
 
 Basic effectful logging:
