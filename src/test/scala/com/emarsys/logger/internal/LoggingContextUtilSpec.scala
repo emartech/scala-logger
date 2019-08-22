@@ -117,12 +117,11 @@ class LoggingContextUtilSpec extends WordSpec with Matchers with TypeCheckedTrip
     flatMarkers.map(_.toString).mkString("{", ", ", "}")
   }
 
-  private def flattenMarkers(marker: Marker): List[Marker] = {
+  private def flattenMarkers(marker: Marker): List[Marker] =
     if (!marker.iterator().hasNext) {
       List(marker)
     } else {
       marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
     }
-  }
 
 }

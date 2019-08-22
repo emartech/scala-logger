@@ -129,13 +129,12 @@ trait LoggingBehavior[F[_]] { this: FlatSpec with Matchers with TypeCheckedTripl
     }
   }
 
-  private def flattenMarkers(marker: Marker): List[Marker] = {
+  private def flattenMarkers(marker: Marker): List[Marker] =
     if (!marker.iterator().hasNext) {
       List(marker)
     } else {
       marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
     }
-  }
 
   trait LoggingScope {
 

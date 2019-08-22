@@ -8,7 +8,6 @@ import scala.collection.mutable.ListBuffer
 class TestAppender extends AppenderBase[ILoggingEvent] {
   val events: ListBuffer[ILoggingEvent] = ListBuffer.empty[ILoggingEvent]
 
-  override def append(eventObject: ILoggingEvent): Unit = {
+  override def append(eventObject: ILoggingEvent): Unit =
     events += eventObject
-  }
 }
