@@ -5,7 +5,7 @@ scala:
 script:
 - sbt ++$TRAVIS_SCALA_VERSION test
 jdk:
-- oraclejdk8
+- openjdk11
 
 before_install:
 - if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
