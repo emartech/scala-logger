@@ -4,7 +4,7 @@ import java.time._
 
 import org.scalacheck.Prop.forAll
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.prop.Checkers
+import org.scalatestplus.scalacheck.Checkers
 import org.scalatest.{FreeSpec, Matchers}
 import com.emarsys.logger.testutil.Arbitraries._
 
