@@ -121,7 +121,7 @@ class LoggingContextUtilSpec extends WordSpec with Matchers with TypeCheckedTrip
     if (!marker.iterator().hasNext) {
       List(marker)
     } else {
-      marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
+      marker :: marker.iterator().asScala.drop(1).flatMap(flattenMarkers).toList
     }
 
 }

@@ -42,15 +42,15 @@ lazy val `scala-logger` = (project in file("."))
     ),
     libraryDependencies ++= {
       Seq(
-        "org.typelevel"        %% "cats-core"               % "1.4.0",
-        "org.typelevel"        %% "cats-mtl-core"           % "0.4.0",
-        "org.typelevel"        %% "cats-effect"             % "1.0.0",
+        "org.typelevel"        %% "cats-core"               % "2.0.0",
+        "org.typelevel"        %% "cats-mtl-core"           % "0.7.0",
+        "org.typelevel"        %% "cats-effect"             % "2.0.0",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
-        "net.logstash.logback" % "logstash-logback-encoder" % "5.1",
-        "org.scalatest"        %% "scalatest"               % "3.0.5" % "test",
+        "net.logstash.logback" % "logstash-logback-encoder" % "6.2",
+        "org.scalatest"        %% "scalatest"               % "3.0.8" % "test",
         "org.scalacheck"       %% "scalacheck"              % "1.14.0" % "test",
-        "com.github.mpilquist" %% "simulacrum"              % "0.12.0",
-        "com.propensive"       %% "magnolia"                % "0.10.0"
+        "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
+        "com.propensive"       %% "magnolia"                % "0.11.0"
       )
     }
   )
