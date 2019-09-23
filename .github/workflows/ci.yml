@@ -1,4 +1,5 @@
 name: CI
+
 on: [push]
 
 jobs:
@@ -9,5 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: olafurpg/setup-scala@v2
+      with:
+        java-version: openjdk@1.11
     - name: Compile
-      run: csbt compile
+      run: csbt clean compile test
