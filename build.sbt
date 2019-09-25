@@ -38,7 +38,8 @@ lazy val `scala-logger` = (project in file("."))
       "-Ywarn-value-discard",
       "-Ywarn-extra-implicit",
       "-Ywarn-unused:imports",
-      "-opt-warnings"
+      "-opt-warnings",
+      "-target:jvm-1.8"
     ),
     libraryDependencies ++= {
       Seq(
