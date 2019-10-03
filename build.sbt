@@ -50,9 +50,9 @@ lazy val `scala-logger` = (project in file("."))
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "6.2",
         "org.scalatest"        %% "scalatest"               % "3.0.8" % "test",
-        "org.scalacheck"       %% "scalacheck"              % "1.14.0" % "test",
+        "org.scalacheck"       %% "scalacheck"              % "1.14.2" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
-        "com.propensive"       %% "magnolia"                % "0.11.0"
+        "com.propensive"       %% "magnolia"                % "0.12.0"
       )
     }
   )
@@ -68,7 +68,7 @@ inThisBuild(
   )
 )
 
-addCompilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.6")
-addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.10")
+addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.1" cross CrossVersion.full)
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
