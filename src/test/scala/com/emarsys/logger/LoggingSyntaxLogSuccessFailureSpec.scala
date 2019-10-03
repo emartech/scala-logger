@@ -62,6 +62,7 @@ class LoggingSyntaxLogSuccessFailureSpec extends WordSpec with Matchers {
     private val loggerName: String              = UUID.randomUUID().toString.take(8)
     implicit val loggingContext: LoggingContext = LoggingContext(loggerName)
     private val unsafeLogger                    = Logging.createUnsafeLogger(loggerName)
+
     implicit val logger: Logging[Future] =
       Logging.create[Future]((level, msg, ctx) => Future.successful(unsafeLogger.log(level, msg, ctx)))
 

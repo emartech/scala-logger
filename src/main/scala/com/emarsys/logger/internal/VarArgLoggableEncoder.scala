@@ -6,6 +6,7 @@ import scala.annotation.implicitAmbiguous
 import scala.language.implicitConversions
 
 trait VarArgLoggableEncoder extends VarArgLoggableEncoder1 {
+
   implicit def hasLoggableEncoder[A](a: A)(implicit encoder: LoggableEncoder[A]): HasLoggableEncoder =
     encoder.toLoggable(a).asInstanceOf[HasLoggableEncoder]
 }

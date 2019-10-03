@@ -21,6 +21,7 @@ object LoggingContextUtil {
   }
 
   private def toJava(logData: Map[String, LoggableValue]): java.util.Map[_, _] = logData.mapValues(toJava).asJava
+
   private def toJava(lv: LoggableValue): Any = lv match {
     case LoggableIntegral(value) => value
     case LoggableFloating(value) => value
