@@ -1,7 +1,7 @@
 import org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.9",
+  scalaVersion := "2.12.10",
   organization := "com.emarsys",
   scalafmtOnCompile := true
 )
@@ -9,6 +9,8 @@ lazy val commonSettings = Seq(
 // logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
 // instead of a proper logback Logger instance
 parallelExecution in ThisBuild := false
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val `scala-logger` = (project in file("."))
   .settings(commonSettings: _*)
