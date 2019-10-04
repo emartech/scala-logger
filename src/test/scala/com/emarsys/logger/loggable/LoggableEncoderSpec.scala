@@ -86,7 +86,7 @@ class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with Type
 
       "maps" in {
         check {
-          forAll((l: Map[String, Int]) => l.toLoggable === LoggableObject(l.mapValues(_.toLoggable)))
+          forAll((l: Map[String, Int]) => l.toLoggable === LoggableObject(l map { case (k, v) => (k, v.toLoggable) }))
         }
       }
 

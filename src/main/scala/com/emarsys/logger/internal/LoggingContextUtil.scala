@@ -20,7 +20,8 @@ object LoggingContextUtil {
     }
   }
 
-  private def toJava(logData: Map[String, LoggableValue]): java.util.Map[_, _] = logData.mapValues(toJava).asJava
+  private def toJava(logData: Map[String, LoggableValue]): java.util.Map[_, _] =
+    logData.map({ case (k, v) => (k, toJava(v)) }).asJava
 
   private def toJava(lv: LoggableValue): Any = lv match {
     case LoggableIntegral(value) => value
@@ -28,7 +29,7 @@ object LoggingContextUtil {
     case LoggableString(value)   => value
     case LoggableBoolean(value)  => value
     case LoggableList(list)      => list.map(toJava).asJava
-    case LoggableObject(obj)     => obj.mapValues(toJava).asJava
+    case LoggableObject(obj)     => toJava(obj)
     case LoggableNil             => null
   }
 }

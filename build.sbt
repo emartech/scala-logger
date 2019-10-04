@@ -1,7 +1,10 @@
 import org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings
 
+val v2_12 = "2.12.10"
+val v2_13 = "2.13.1"
+
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.10",
+  crossScalaVersions := List(v2_13, v2_12),
   organization := "com.emarsys",
   scalafmtOnCompile := true
 )
@@ -23,19 +26,11 @@ lazy val `scala-logger` = (project in file("."))
       "-explaintypes",
       "-Yrangepos",
       "-feature",
-      "-Xfuture",
-      "-Ypartial-unification",
       "-language:higherKinds",
       "-language:existentials",
       "-unchecked",
-      "-Yno-adapted-args",
       "-Xlint:_,-type-parameter-shadow",
-      "-Xsource:2.13",
       "-Ywarn-dead-code",
-      "-Ywarn-inaccessible",
-      "-Ywarn-infer-any",
-      "-Ywarn-nullary-override",
-      "-Ywarn-nullary-unit",
       "-Ywarn-numeric-widen",
       "-Ywarn-value-discard",
       "-Ywarn-extra-implicit",
@@ -43,6 +38,7 @@ lazy val `scala-logger` = (project in file("."))
       "-opt-warnings",
       "-target:jvm-1.8"
     ),
+    scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= {
       Seq(
@@ -56,7 +52,8 @@ lazy val `scala-logger` = (project in file("."))
         "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
         "com.propensive"       %% "magnolia"                % "0.12.0"
       )
-    }
+    },
+    libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value)
   )
 
 inThisBuild(
@@ -70,7 +67,30 @@ inThisBuild(
   )
 )
 
-addCompilerPlugin("org.typelevel"   %% "kind-projector" % "0.10.3")
-addCompilerPlugin("org.scalamacros" % "paradise"        % "2.1.1" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
+
+def versionSpecificScalacOptions(scalaV: String) =
+  if (scalaV == v2_12)
+    Seq(
+      "-Xfuture",
+      "-Xsource:2.13",
+      "-Yno-adapted-args",
+      "-Ywarn-inaccessible",
+      "-Ywarn-infer-any",
+      "-Ywarn-nullary-override",
+      "-Ywarn-nullary-unit",
+      "-Ypartial-unification"
+    )
+  else
+    Seq(
+      "-Ymacro-annotations"
+    )
+
+def versionSpecificLibraryDependencies(scalaV: String) =
+  if (scalaV == v2_12)
+    Seq(
+      compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+    )
+  else Seq()
