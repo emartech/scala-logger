@@ -4,11 +4,12 @@ import java.time._
 
 import org.scalacheck.Prop.forAll
 import org.scalactic.TypeCheckedTripleEquals
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.Checkers
-import org.scalatest.{FreeSpec, Matchers}
 import com.emarsys.logger.testutil.Arbitraries._
 
-class LoggableEncoderSpec extends FreeSpec with Checkers with Matchers with TypeCheckedTripleEquals {
+class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with TypeCheckedTripleEquals {
   import LoggableEncoder.ops._
 
   "LoggableEncoder should" - {

@@ -2,9 +2,10 @@ package com.emarsys.logger
 
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableObject, LoggableString}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class LoggingContextSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
+class LoggingContextSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 
   "LoggingContext" should {
     "add log parameters via addParameter" in {

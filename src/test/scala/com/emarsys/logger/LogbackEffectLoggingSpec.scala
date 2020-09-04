@@ -3,9 +3,10 @@ package com.emarsys.logger
 import cats.effect.IO
 import ch.qos.logback.classic.Level
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class LogbackEffectLoggingSpec extends FlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[IO] {
+class LogbackEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[IO] {
 
   override def runF(f: IO[Unit]): Unit = f.unsafeRunSync()
 

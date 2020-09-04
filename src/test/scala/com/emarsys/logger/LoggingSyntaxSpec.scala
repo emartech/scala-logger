@@ -1,9 +1,10 @@
 package com.emarsys.logger
-import org.scalatest.{Matchers, WordSpec}
 
 import cats.Applicative
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class LoggingSyntaxSpec extends WordSpec with Matchers {
+class LoggingSyntaxSpec extends AnyWordSpec with Matchers {
   "LoggingSyntax" should {
     "compile extendContext" in {
       """

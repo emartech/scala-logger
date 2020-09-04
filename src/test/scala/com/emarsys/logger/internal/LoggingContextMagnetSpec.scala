@@ -3,9 +3,10 @@ package com.emarsys.logger.internal
 import cats.{Id, Monad}
 import com.emarsys.logger.{Context, Logged, LoggingContext}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class LoggingContextMagnetSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
+class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 
   def getMagnet[F[_]](implicit m: LoggingContextMagnet[F]) = m
 

@@ -3,8 +3,8 @@ language: scala
 jdk:
 - openjdk11
 
-scala_version_212: &scala_version_212 "2.12.10"
-scala_version_213: &scala_version_213 "2.13.1"
+scala_version_212: &scala_version_212 "2.12.12"
+scala_version_213: &scala_version_213 "2.13.3"
 
 before_install:
 - git fetch --tags

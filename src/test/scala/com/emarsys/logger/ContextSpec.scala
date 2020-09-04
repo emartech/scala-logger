@@ -1,8 +1,9 @@
 package com.emarsys.logger
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class ContextSpec extends WordSpec with Matchers {
+class ContextSpec extends AnyWordSpec with Matchers {
 
   "Context" should {
 

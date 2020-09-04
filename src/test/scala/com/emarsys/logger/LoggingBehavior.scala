@@ -7,12 +7,13 @@ import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObje
 import com.emarsys.logger.testutil.TestAppender
 import net.logstash.logback.marker.Markers
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.slf4j.{LoggerFactory, Marker}
 
 import scala.collection.JavaConverters._
 
-trait LoggingBehavior[F[_]] { this: FlatSpec with Matchers with TypeCheckedTripleEquals =>
+trait LoggingBehavior[F[_]] { this: AnyFlatSpec with Matchers with TypeCheckedTripleEquals =>
   type SimpleLogFn       = (Logging[F], String, LoggingContext) => F[Unit]
   type ErrorLogFn        = (Logging[F], Throwable, LoggingContext) => F[Unit]
   type ErrorLogWithMsgFn = (Logging[F], Throwable, String, LoggingContext) => F[Unit]

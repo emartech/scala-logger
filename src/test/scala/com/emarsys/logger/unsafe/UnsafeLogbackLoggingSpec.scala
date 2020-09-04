@@ -4,9 +4,10 @@ import cats.Id
 import ch.qos.logback.classic.Level
 import com.emarsys.logger.{Logging, LoggingBehavior}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.flatspec.AnyFlatSpec
 
-class UnsafeLogbackLoggingSpec extends FlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[Id] {
+class UnsafeLogbackLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[Id] {
 
   override def runF(f: Id[Unit]): Unit = f
 

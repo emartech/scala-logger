@@ -1,8 +1,9 @@
 package com.emarsys.logger
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class LoggingSpec extends WordSpec with Matchers {
+class LoggingSpec extends AnyWordSpec with Matchers {
 
   "Logging" should {
 

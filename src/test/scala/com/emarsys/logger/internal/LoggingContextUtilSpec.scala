@@ -3,12 +3,13 @@ package com.emarsys.logger.internal
 import com.emarsys.logger.LoggingContext
 import com.emarsys.logger.loggable._
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 import org.slf4j.Marker
 
 import scala.collection.JavaConverters._
 
-class LoggingContextUtilSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
+class LoggingContextUtilSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 
   "#toMarker" should {
     "add the transaction id to the marker" in {

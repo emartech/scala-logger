@@ -5,15 +5,16 @@ import java.util.UUID
 import cats.instances.future._
 import ch.qos.logback.classic.Logger
 import com.emarsys.logger.testutil.TestAppender
-import org.scalatest.{Matchers, WordSpec}
-import org.slf4j.LoggerFactory
 import com.emarsys.logger.syntax._
+import org.slf4j.LoggerFactory
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
-
-class LoggingSyntaxLogSuccessFailureSpec extends WordSpec with Matchers {
+class LoggingSyntaxLogSuccessFailureSpec extends AnyWordSpec with Matchers {
   "LoggingSyntax" should {
     def await[T](f: Future[T]) = Await.ready(f, 1.second)
 

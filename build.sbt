@@ -1,7 +1,7 @@
 import org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings
 
-val v2_12 = "2.12.10"
-val v2_13 = "2.13.1"
+val v2_12 = "2.12.12"
+val v2_13 = "2.13.3"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := List(v2_13, v2_12),
@@ -42,15 +42,16 @@ lazy val `scala-logger` = (project in file("."))
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= {
       Seq(
-        "org.typelevel"        %% "cats-core"               % "2.0.0",
-        "org.typelevel"        %% "cats-mtl-core"           % "0.7.0",
-        "org.typelevel"        %% "cats-effect"             % "2.0.0",
+        "org.typelevel"        %% "cats-core"               % "2.2.0",
+        "org.typelevel"        %% "cats-mtl-core"           % "0.7.1",
+        "org.typelevel"        %% "cats-effect"             % "2.1.4",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
-        "net.logstash.logback" % "logstash-logback-encoder" % "6.2",
-        "org.scalatest"        %% "scalatest"               % "3.0.8" % "test",
-        "org.scalacheck"       %% "scalacheck"              % "1.14.2" % "test",
+        "net.logstash.logback" % "logstash-logback-encoder" % "6.4",
+        "org.scalatest"        %% "scalatest"               % "3.2.2" % "test",
+        "org.scalatestplus"    %% "scalacheck-1-14"         % "3.2.2.0" % "test",
+        "org.scalacheck"       %% "scalacheck"              % "1.14.3" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
-        "com.propensive"       %% "magnolia"                % "0.12.0"
+        "com.propensive"       %% "magnolia"                % "0.12.8"
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value)
@@ -67,7 +68,7 @@ inThisBuild(
   )
 )
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
+addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 
