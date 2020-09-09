@@ -51,7 +51,8 @@ lazy val `scala-logger` = (project in file("."))
         "org.scalatestplus"    %% "scalacheck-1-14"         % "3.2.2.0" % "test",
         "org.scalacheck"       %% "scalacheck"              % "1.14.3" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
-        "com.propensive"       %% "magnolia"                % "0.12.8"
+        "com.propensive"       %% "magnolia"                % "0.17.0",
+        "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value)
