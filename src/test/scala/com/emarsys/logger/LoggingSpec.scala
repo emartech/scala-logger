@@ -23,7 +23,6 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import scala.concurrent.Future
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import cats.instances.future._
         |import com.emarsys.logger.implicits._
         |import com.emarsys.logger.unsafe.implicits._
         |
@@ -37,7 +36,6 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import cats.effect.IO
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import cats.instances.future._
         |import com.emarsys.logger.implicits._
         |
         |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO, IO]("default").unsafeRunSync()
@@ -63,7 +61,6 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import scala.concurrent.Future
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import cats.instances.future._
         |import com.emarsys.logger.implicits._
         |import com.emarsys.logger.unsafe.implicits._
         |

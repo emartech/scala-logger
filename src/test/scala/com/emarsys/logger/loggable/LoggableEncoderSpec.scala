@@ -118,7 +118,6 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
       }
 
       "traversables" in {
-        import cats.instances.vector._
         check {
           forAll((v: Vector[Int]) => v.toLoggable === LoggableList(v.toList.map(_.toLoggable)))
         }

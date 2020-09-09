@@ -2,7 +2,6 @@ package com.emarsys.logger
 
 import java.util.UUID
 
-import cats.instances.future._
 import ch.qos.logback.classic.Logger
 import com.emarsys.logger.testutil.TestAppender
 import com.emarsys.logger.syntax._
