@@ -11,7 +11,6 @@ class ContextSpec extends AnyWordSpec with Matchers {
       """
         |import cats._
         |import cats.data._
-        |import com.emarsys.logger.implicits._
         |
         |type App[A] = ReaderT[Id, LoggingContext, A]
         |
@@ -23,7 +22,6 @@ class ContextSpec extends AnyWordSpec with Matchers {
       """
         |import cats._
         |import cats.data._
-        |import com.emarsys.logger.implicits._
         |
         |type Reader[A] = ReaderT[Id, LoggingContext, A]
         |type App[A] = EitherT[Reader, Throwable, A]

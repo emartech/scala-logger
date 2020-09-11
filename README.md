@@ -5,8 +5,10 @@
 Add to sbt:
 
 ```sbtshell
-libraryDependencies += "com.emarsys" %% "scala-logger" % "0.5.0"
+libraryDependencies += "com.emarsys" %% "scala-logger" % "x.y.z"
 ```
+
+The latest released version can be found on the maven badge above.
 
 ### Examples
 
@@ -15,7 +17,7 @@ All examples expect the appropriate `Logging[F]` instance. For example, `log[IO]
 implicit val logging: Logging[IO] = Logging.createEffectLogger("logger-name")
 ```
 
-In case of a non effectful logger (e.g. when using `Logging[Id]` or `Logging[Future]`), just import the unsafe instances: 
+In case of a non effectful logger (e.g. when using `Logging[Id]` or `Logging[Future]`), just import the unsafe instances:
 ```scala
 import com.emarsys.logger.unsafe.implicits._
 ```
@@ -23,7 +25,7 @@ import com.emarsys.logger.unsafe.implicits._
 Basic unsafe logging without effects (`unsafeLog` uses `Logging[Id]`):
 
 ```scala
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 import com.emarsys.logger.unsafe.implicits._
 
 val context = LoggingContext("job1")
@@ -34,7 +36,7 @@ unsafeLog.info("This executes immediately!")(context)
 Basic effectful logging:
 
 ```scala
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 
 val context = LoggingContext("job1")
 
@@ -44,7 +46,7 @@ log[IO].info("My first log!")(context).unsafeRunSync()
 Passing context implicitly:
 
 ```scala
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 
 implicit val context: LoggingContext = LoggingContext("job1")
 
@@ -54,7 +56,7 @@ log[IO].info("Implicit context!").unsafeRunSync()
 Adding contextual information:
 
 ```scala
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 
 implicit val context: LoggingContext =
   LoggingContext("job1") <>
@@ -68,7 +70,7 @@ Passing context as typeclass
 
 ```scala
 import com.emarsys.logger.{Logging, Context}
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 
 def work[F[_]: Logging: Context](): F[Unit] = {
   log[F].info("Typeclasses!")
@@ -79,7 +81,7 @@ Adding contextual information when using typeclasses
 
 ```scala
 import com.emarsys.logger.{Logging, Context}
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 
 def work[F[_]: Logging: Context](): F[Unit] = {
   extendContext("id" -> 1, "job" -> "job01") {
@@ -92,7 +94,7 @@ Providing implementation for a tagless final algebra with logging
 
 ```scala
 import com.emarsys.logger.Logged
-import com.emarsys.logger.implicits._
+import com.emarsys.logger.syntax._
 import cats.syntax.applicative._
 
 trait Clock[F[_]] {

@@ -46,7 +46,6 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
     }
 
     "return the context when constructed from a monad and context typeclasses" in {
-      import cats.mtl.instances.local._
       import cats.syntax.applicative._
 
       val lc = LoggingContext("")

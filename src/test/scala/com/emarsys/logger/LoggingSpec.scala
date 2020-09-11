@@ -10,7 +10,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
     "compile with Id" in {
       """
         |import cats.Id
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |import com.emarsys.logger.unsafe.implicits._
         |
         |implicit val lc: LoggingContext = LoggingContext("")
@@ -23,7 +23,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import scala.concurrent.Future
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |import com.emarsys.logger.unsafe.implicits._
         |
         |implicit val lc: LoggingContext = LoggingContext("")
@@ -36,7 +36,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import cats.effect.IO
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |
         |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO, IO]("default").unsafeRunSync()
         |implicit val lc: LoggingContext = LoggingContext("")
@@ -48,7 +48,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
     "compile with Logged[Id]" in {
       """
         |import cats.Id
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |import com.emarsys.logger.unsafe.implicits._
         |
         |type LoggedId[A] = Logged[Id, A]
@@ -61,7 +61,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """
         |import scala.concurrent.Future
         |import scala.concurrent.ExecutionContext.Implicits.global
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |import com.emarsys.logger.unsafe.implicits._
         |
         |type LoggedFuture[A] = Logged[Future, A]
@@ -73,7 +73,7 @@ class LoggingSpec extends AnyWordSpec with Matchers {
     "compile with Logged[IO]" in {
       """
         |import cats.effect.IO
-        |import com.emarsys.logger.implicits._
+        |import com.emarsys.logger.syntax._
         |
         |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO, IO]("default").unsafeRunSync()
         |type LoggedIO[A] = Logged[IO, A]

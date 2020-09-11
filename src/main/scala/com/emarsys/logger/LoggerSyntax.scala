@@ -45,7 +45,7 @@ trait LoggerSyntax extends VarArgLoggableEncoder {
     ReaderT.local(ctxExtender)(ReaderT(block))
 
   def modifyContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
-    Context[F].local(ctxExtender)(fa)
+    Context[F].local(fa)(ctxExtender)
 
   def extendContext[F[_]: Context, A](params: (String, HasLoggableEncoder)*)(fa: => F[A]): F[A] =
     modifyContext(_.addParameters(params: _*))(fa)
@@ -131,7 +131,7 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
     }
 
   def withModifiedContext(ctxExtender: LoggingContext => LoggingContext)(implicit context: Context[F]): F[A] =
-    Context[F].local(ctxExtender)(fa)
+    Context[F].local(fa)(ctxExtender)
 }
 
 final class LoggedOps[F[_], A](val fa: F[A]) extends AnyVal {
