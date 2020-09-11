@@ -1,6 +1,6 @@
 ## Creating a release
 
-This library is using [sbt-release-early] for releasing artifacts. Every push will be released to maven central, see the plugins documentation on the versioning schema.
+This library is using [sbt-ci-release] for releasing artifacts. Every push to master will end up as a snapshot release, see the plugins documentation on the versioning schema.
 
 ### To cut a final release:
 
@@ -15,6 +15,6 @@ $ git push --tag
 After pushing the tag, while it is not strictly necessary, please [draft a release on github] with this tag too.
 
 
-[sbt-release-early]: https://github.com/scalacenter/sbt-release-early
+[sbt-ci-release]: https://github.com/olafurpg/sbt-ci-release
 [semver]: https://semver.org
 [draft a release on github]: https://github.com/emartech/scala-logger/releases/new
