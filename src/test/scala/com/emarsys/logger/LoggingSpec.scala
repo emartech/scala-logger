@@ -73,10 +73,10 @@ class LoggingSpec extends AnyWordSpec with Matchers {
     "compile with Logged[IO]" in {
       """
         |import cats.effect.IO
+        |import com.emarsys.logger.LoggedIO
         |import com.emarsys.logger.syntax._
         |
         |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO, IO]("default").unsafeRunSync()
-        |type LoggedIO[A] = Logged[IO, A]
         |
         |log[LoggedIO].warn("oh noe")
       """.stripMargin should compile
