@@ -41,7 +41,7 @@ lazy val `scala-logger` = (project in file("core"))
         "org.scalatest"        %% "scalatest"               % "3.2.2" % "test",
         "org.scalatestplus"    %% "scalacheck-1-14"         % "3.2.2.0" % "test",
         "org.scalacheck"       %% "scalacheck"              % "1.15.2" % "test",
-        "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
+        "com.github.mpilquist" %% "simulacrum"              % "1.0.0",
         "com.propensive"       %% "magnolia"                % "0.17.0",
         "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
       )
