@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
   .settings(
     crossScalaVersions := Nil,
   )
-  .aggregate(`scala-logger`)
+  .aggregate(`scala-logger`, `akka-http-contrib`)
 
 lazy val `scala-logger` = (project in file("core"))
   .settings(commonSettings: _*)
@@ -45,8 +45,25 @@ lazy val `scala-logger` = (project in file("core"))
         "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
       )
     },
-    libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value)
+    libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+
   )
+
+lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "scala-logger-akka-http-contrib",
+    libraryDependencies ++= {
+      Seq(
+        "com.typesafe.akka" %% "akka-http" % "10.2.1"
+      )
+    },
+    libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+
+  ).dependsOn(`scala-logger`)
+
 
 inThisBuild(
   List(
@@ -59,7 +76,6 @@ inThisBuild(
   )
 )
 
-addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 
