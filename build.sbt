@@ -8,7 +8,9 @@ lazy val commonSettings = Seq(
   scalaVersion := v2_13,
   organization := "com.emarsys",
   scalafmtOnCompile := true,
-  scalacOptions ++= commonScalacOptions
+  scalacOptions ++= commonScalacOptions,
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
+  scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value),
 )
 
 // logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
@@ -19,14 +21,15 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
+  .settings(
+    crossScalaVersions := Nil,
+  )
   .aggregate(`scala-logger`)
 
 lazy val `scala-logger` = (project in file("core"))
   .settings(commonSettings: _*)
   .settings(
     name := "scala-logger",
-    scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value),
-    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= {
       Seq(
         "org.typelevel"        %% "cats-core"               % "2.2.0",
