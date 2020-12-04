@@ -5,8 +5,10 @@ val v2_13 = "2.13.3"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := List(v2_13, v2_12),
+  scalaVersion := v2_13,
   organization := "com.emarsys",
-  scalafmtOnCompile := true
+  scalafmtOnCompile := true,
+  scalacOptions ++= commonScalacOptions
 )
 
 // logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
@@ -15,29 +17,14 @@ parallelExecution in ThisBuild := false
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val `scala-logger` = (project in file("."))
+lazy val root = (project in file("."))
+  .settings(noPublishSettings)
+  .aggregate(`scala-logger`)
+
+lazy val `scala-logger` = (project in file("core"))
   .settings(commonSettings: _*)
   .settings(
     name := "scala-logger",
-    scalacOptions ++= Seq(
-      "-deprecation",
-      "-encoding",
-      "UTF-8",
-      "-explaintypes",
-      "-Yrangepos",
-      "-feature",
-      "-language:higherKinds",
-      "-language:existentials",
-      "-unchecked",
-      "-Xlint:_,-type-parameter-shadow",
-      "-Ywarn-dead-code",
-      "-Ywarn-numeric-widen",
-      "-Ywarn-value-discard",
-      "-Ywarn-extra-implicit",
-      "-Ywarn-unused:imports",
-      "-opt-warnings",
-      "-target:jvm-1.8"
-    ),
     scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= {
@@ -73,6 +60,26 @@ addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersi
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 
+lazy val commonScalacOptions = Seq(
+  "-deprecation",
+  "-encoding",
+  "UTF-8",
+  "-explaintypes",
+  "-Yrangepos",
+  "-feature",
+  "-language:higherKinds",
+  "-language:existentials",
+  "-unchecked",
+  "-Xlint:_,-type-parameter-shadow",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Ywarn-extra-implicit",
+  "-Ywarn-unused:imports",
+  "-opt-warnings",
+  "-target:jvm-1.8"
+)
+
 def versionSpecificScalacOptions(scalaV: String) =
   if (scalaV == v2_12)
     Seq(
@@ -96,3 +103,9 @@ def versionSpecificLibraryDependencies(scalaV: String) =
       compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
     )
   else Seq()
+
+lazy val noPublishSettings = Seq(
+  publish := {},
+  publishLocal := {},
+  publishArtifact := false
+)
