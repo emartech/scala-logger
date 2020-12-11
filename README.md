@@ -1,4 +1,5 @@
-# Scala Logger [![Build Status](https://travis-ci.org/emartech/scala-logger.svg?branch=master)](https://travis-ci.org/emartech/scala-logger) [![Maven Central](https://img.shields.io/maven-central/v/com.emarsys/scala-logger_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.emarsys%22%20AND%20a:%22scala-logger_2.12%22)
+# Scala Logger [![Build Status](https://github.com/emartech/scala-logger/workflows/CI/badge.svg)](https://github.com/emartech/scala-logger/actions?query=workflow%3ACI) [![Maven Central](https://img.shields.io/maven-central/v/com.emarsys/scala-logger_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.emarsys%22%20AND%20a:%22scala-logger_2.12%22)
+
 
 ## Usage
 

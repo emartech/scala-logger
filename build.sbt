@@ -22,6 +22,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .settings(
+    organization := "com.emarsys",
     crossScalaVersions := Nil,
   )
   .aggregate(`scala-logger`, `akka-http-contrib`)
@@ -47,7 +48,6 @@ lazy val `scala-logger` = (project in file("core"))
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
     addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
-
   )
 
 lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
