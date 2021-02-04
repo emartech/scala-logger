@@ -1,4 +1,5 @@
 package com.emarsys.logger.internal
+
 import com.emarsys.logger.LoggingContext
 import com.emarsys.logger.loggable._
 import net.logstash.logback.marker.Markers._

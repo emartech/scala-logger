@@ -1,4 +1,5 @@
 package com.emarsys.logger.unsafe
+
 import cats.Id
 import com.emarsys.logger.internal.LoggingContextUtil
 import com.emarsys.logger.levels.LogLevel

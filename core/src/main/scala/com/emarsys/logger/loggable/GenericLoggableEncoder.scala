@@ -1,4 +1,5 @@
 package com.emarsys.logger.loggable
+
 import magnolia.{CaseClass, Magnolia, SealedTrait}
 
 import scala.language.experimental.macros

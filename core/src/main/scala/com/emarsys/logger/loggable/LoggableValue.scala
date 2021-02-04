@@ -1,4 +1,5 @@
 package com.emarsys.logger.loggable
+
 import cats.Show
 import cats.kernel.Eq
 

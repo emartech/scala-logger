@@ -20,14 +20,14 @@ class UnsafeLogbackLoggingSpec extends AnyFlatSpec with Matchers with TypeChecke
   "Logging.warn" should behave like simpleLog(Level.WARN, { case (logger, msg, ctx) => logger.warn(msg)(ctx) })
 
   it should behave like errorLog(
-    { case (logger, error, ctx)          => logger.warn(error)(ctx) },
+    { case (logger, error, ctx) => logger.warn(error)(ctx) },
     { case (logger, error, message, ctx) => logger.warn(error, message)(ctx) }
   )
 
   "Logging.error" should behave like simpleLog(Level.ERROR, { case (logger, msg, ctx) => logger.error(msg)(ctx) })
 
   it should behave like errorLog(
-    { case (logger, error, ctx)          => logger.error(error)(ctx) },
+    { case (logger, error, ctx) => logger.error(error)(ctx) },
     { case (logger, error, message, ctx) => logger.error(error, message)(ctx) }
   )
 }

@@ -1,4 +1,5 @@
 package com.emarsys.logger.testutil
+
 import java.time._
 import java.time.temporal.ChronoUnit.MILLIS
 
