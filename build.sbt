@@ -47,7 +47,7 @@ lazy val `scala-logger` = (project in file("core"))
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
   )
 
 lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
@@ -60,7 +60,7 @@ lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
 
   ).dependsOn(`scala-logger`)
 
