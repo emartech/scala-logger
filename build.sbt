@@ -34,20 +34,20 @@ lazy val `scala-logger` = (project in file("core"))
     libraryDependencies ++= {
       Seq(
         "org.typelevel"        %% "cats-core"               % "2.3.1",
-        "org.typelevel"        %% "cats-mtl"                % "1.0.0",
+        "org.typelevel"        %% "cats-mtl"                % "1.1.1",
         "org.typelevel"        %% "cats-effect"             % "2.3.1",
         "ch.qos.logback"       % "logback-classic"          % "1.2.3",
         "net.logstash.logback" % "logstash-logback-encoder" % "6.4",
         "org.scalatest"        %% "scalatest"               % "3.2.2" % "test",
         "org.scalatestplus"    %% "scalacheck-1-14"         % "3.2.2.0" % "test",
-        "org.scalacheck"       %% "scalacheck"              % "1.14.3" % "test",
+        "org.scalacheck"       %% "scalacheck"              % "1.15.2" % "test",
         "com.github.mpilquist" %% "simulacrum"              % "0.19.0",
         "com.propensive"       %% "magnolia"                % "0.17.0",
         "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
   )
 
 lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
@@ -60,7 +60,7 @@ lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
 
   ).dependsOn(`scala-logger`)
 
