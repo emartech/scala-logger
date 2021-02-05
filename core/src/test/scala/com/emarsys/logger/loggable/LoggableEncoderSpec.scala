@@ -216,7 +216,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
 
         implicit val encoder: LoggableEncoder[T] = LoggableEncoder.deriveLoggableEncoder
 
-        encoder.toLoggable(A(42)) should ===(LoggableObject("x"   -> LoggableIntegral(42)))
+        encoder.toLoggable(A(42)) should ===(LoggableObject("x" -> LoggableIntegral(42)))
         encoder.toLoggable(B("42")) should ===(LoggableObject("y" -> LoggableString("42")))
       }
     }

@@ -28,8 +28,8 @@ object LoggingContextMagnet {
       override def apply[Result](f: LoggingContext => F[Unit]): F[Unit] = f(context)
     }
 
-  implicit def fromImplicitContextAndMonadTypeclass[F[_]](
-      implicit C: Context[F],
+  implicit def fromImplicitContextAndMonadTypeclass[F[_]](implicit
+      C: Context[F],
       M: Monad[F]
   ): LoggingContextMagnet[F] =
     new LoggingContextMagnet[F] {

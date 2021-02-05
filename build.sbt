@@ -10,7 +10,7 @@ lazy val commonSettings = Seq(
   scalafmtOnCompile := true,
   scalacOptions ++= commonScalacOptions,
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
-  scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value),
+  scalacOptions ++= versionSpecificScalacOptions(scalaVersion.value)
 )
 
 // logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
@@ -23,7 +23,7 @@ lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .settings(
     organization := "com.emarsys",
-    crossScalaVersions := Nil,
+    crossScalaVersions := Nil
   )
   .aggregate(`scala-logger`, `akka-http-contrib`)
 
@@ -33,17 +33,17 @@ lazy val `scala-logger` = (project in file("core"))
     name := "scala-logger",
     libraryDependencies ++= {
       Seq(
-        "org.typelevel"        %% "cats-core"               % "2.3.1",
-        "org.typelevel"        %% "cats-mtl"                % "1.1.1",
-        "org.typelevel"        %% "cats-effect"             % "2.3.1",
-        "ch.qos.logback"       % "logback-classic"          % "1.2.3",
-        "net.logstash.logback" % "logstash-logback-encoder" % "6.6",
-        "org.scalatest"        %% "scalatest"               % "3.2.3" % "test",
-        "org.scalatestplus"    %% "scalacheck-1-14"         % "3.2.2.0" % "test",
-        "org.scalacheck"       %% "scalacheck"              % "1.15.2" % "test",
-        "com.github.mpilquist" %% "simulacrum"              % "1.0.0",
-        "com.propensive"       %% "magnolia"                % "0.17.0",
-        "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
+        "org.typelevel"        %% "cats-core"                % "2.3.1",
+        "org.typelevel"        %% "cats-mtl"                 % "1.1.1",
+        "org.typelevel"        %% "cats-effect"              % "2.3.1",
+        "ch.qos.logback"        % "logback-classic"          % "1.2.3",
+        "net.logstash.logback"  % "logstash-logback-encoder" % "6.6",
+        "org.scalatest"        %% "scalatest"                % "3.2.3"   % "test",
+        "org.scalatestplus"    %% "scalacheck-1-14"          % "3.2.2.0" % "test",
+        "org.scalacheck"       %% "scalacheck"               % "1.15.2"  % "test",
+        "com.github.mpilquist" %% "simulacrum"               % "1.0.0",
+        "com.propensive"       %% "magnolia"                 % "0.17.0",
+        "org.scala-lang"        % "scala-reflect"            % scalaVersion.value
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
@@ -61,9 +61,8 @@ lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
     addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
-
-  ).dependsOn(`scala-logger`)
-
+  )
+  .dependsOn(`scala-logger`)
 
 inThisBuild(
   List(
@@ -75,7 +74,6 @@ inThisBuild(
     )
   )
 )
-
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 
