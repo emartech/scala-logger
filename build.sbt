@@ -36,12 +36,12 @@ lazy val `scala-logger` = (project in file("core"))
         "org.typelevel"        %% "cats-core"                % "2.3.1",
         "org.typelevel"        %% "cats-mtl"                 % "1.1.1",
         "org.typelevel"        %% "cats-effect"              % "2.3.1",
+        "org.typelevel"        %% "simulacrum"               % "1.0.1",
         "ch.qos.logback"        % "logback-classic"          % "1.2.3",
         "net.logstash.logback"  % "logstash-logback-encoder" % "6.6",
         "org.scalatest"        %% "scalatest"                % "3.2.3"   % "test",
         "org.scalatestplus"    %% "scalacheck-1-14"          % "3.2.2.0" % "test",
         "org.scalacheck"       %% "scalacheck"               % "1.15.2"  % "test",
-        "com.github.mpilquist" %% "simulacrum"               % "1.0.0",
         "com.propensive"       %% "magnolia"                 % "0.17.0",
         "org.scala-lang"        % "scala-reflect"            % scalaVersion.value
       )
