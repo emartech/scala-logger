@@ -56,7 +56,7 @@ lazy val `akka-http-contrib` = (project in file("akka-http-contrib"))
     name := "scala-logger-akka-http-contrib",
     libraryDependencies ++= {
       Seq(
-        "com.typesafe.akka" %% "akka-http" % "10.2.3"
+        "com.typesafe.akka" %% "akka-http" % "10.2.4"
       )
     },
     libraryDependencies ++= versionSpecificLibraryDependencies(scalaVersion.value),
