@@ -1,7 +1,7 @@
 import org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings
 
-val v2_12 = "2.12.12"
-val v2_13 = "2.13.3"
+val v2_12 = "2.12.13"
+val v2_13 = "2.13.5"
 
 lazy val commonSettings = Seq(
   crossScalaVersions := List(v2_13, v2_12),
