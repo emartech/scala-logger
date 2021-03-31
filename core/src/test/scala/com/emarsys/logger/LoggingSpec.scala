@@ -32,19 +32,6 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """.stripMargin should compile
     }
 
-    "compile with IO" in {
-      """
-        |import cats.effect.IO
-        |import scala.concurrent.ExecutionContext.Implicits.global
-        |import com.emarsys.logger.syntax._
-        |
-        |implicit val logger: Logging[IO] = Logging.createEffectLogger[IO, IO]("default").unsafeRunSync()
-        |implicit val lc: LoggingContext = LoggingContext("")
-        |
-        |log[IO].warn("oh noe")
-      """.stripMargin should compile
-    }
-
     "compile with Logged[Id]" in {
       """
         |import cats.Id
@@ -67,18 +54,6 @@ class LoggingSpec extends AnyWordSpec with Matchers {
         |type LoggedFuture[A] = Logged[Future, A]
         |
         |log[LoggedFuture].warn("oh noe")
-      """.stripMargin should compile
-    }
-
-    "compile with Logged[IO]" in {
-      """
-        |import cats.effect.IO
-        |import com.emarsys.logger.LoggedIO
-        |import com.emarsys.logger.syntax._
-        |
-        |implicit val logger: Logging[LoggedIO] = Logging.createEffectLogger[LoggedIO, IO]("default").unsafeRunSync()
-        |
-        |log[LoggedIO].warn("oh noe")
       """.stripMargin should compile
     }
   }

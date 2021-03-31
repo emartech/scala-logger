@@ -17,6 +17,8 @@ lazy val root = project
   )
   .aggregate(
     core,
+    catsEffect2,
+    catsEffect3,
     akkaHttpContrib
   )
 
@@ -30,6 +32,20 @@ lazy val core =
       // instead of a proper logback Logger instance
       parallelExecution := false
     )
+
+lazy val catsEffect2 =
+  project
+    .in(file("cats-effect-2"))
+    .settings(stdSettings("scala-logger-ce2"))
+    .settings(catsEffect2Dependencies)
+    .dependsOn(core % "compile->compile;test->test")
+
+lazy val catsEffect3 =
+  project
+    .in(file("cats-effect-3"))
+    .settings(stdSettings("scala-logger-ce3"))
+    .settings(catsEffect3Dependencies)
+    .dependsOn(core % "compile->compile;test->test")
 
 lazy val akkaHttpContrib =
   project

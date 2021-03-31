@@ -5,8 +5,7 @@ import com.emarsys.logger.internal.LoggingContextUtil
 import com.emarsys.logger.levels.LogLevel
 import org.slf4j.LoggerFactory
 
-class LogbackEffectLogging[F[_]: Sync] private[logger] (name: String) extends Logging[F] {
-
+class CatsEffectLogging[F[_]: Sync] private[logger] (name: String) extends Logging[F] {
   private val logger = LoggerFactory.getLogger(name)
 
   override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = Sync[F].delay {
@@ -20,7 +19,15 @@ class LogbackEffectLogging[F[_]: Sync] private[logger] (name: String) extends Lo
         if (logger.isWarnEnabled()) logger.warn(marker, msg)
       case LogLevel.ERROR =>
         if (logger.isErrorEnabled()) logger.error(marker, msg)
-
     }
   }
+}
+
+object CatsEffectLogging {
+
+  def createEffectLogger[F[_]: Sync](name: String): F[Logging[F]] = createEffectLoggerG[F, F](name)
+
+  def createEffectLoggerG[F[_]: Sync, G[_]: Sync](name: String): G[Logging[F]] =
+    Sync[G].delay(new CatsEffectLogging[F](name))
+
 }

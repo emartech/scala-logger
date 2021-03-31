@@ -31,7 +31,6 @@ object Dependencies {
     libraryDependencies ++= Seq(
       "org.typelevel"       %% "cats-core"                % "2.4.2",
       "org.typelevel"       %% "cats-mtl"                 % "1.1.2",
-      "org.typelevel"       %% "cats-effect"              % "2.3.3",
       "org.typelevel"       %% "simulacrum"               % "1.0.1",
       "com.propensive"      %% "magnolia"                 % "0.17.0",
       "ch.qos.logback"       % "logback-classic"          % "1.2.3",
@@ -45,5 +44,18 @@ object Dependencies {
       "com.typesafe.akka" %% "akka-http" % "10.2.4"
     )
   ) ++ stdDependencies ++ stdTestDependencies
+
+  val catsEffect2Dependencies = Seq(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-effect" % "2.4.1"
+    )
+  ) ++ stdDependencies ++ stdTestDependencies
+
+  val catsEffect3Dependencies = Seq(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-effect" % "3.0.1"
+    )
+  ) ++ stdDependencies ++ stdTestDependencies
+
 
 }

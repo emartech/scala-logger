@@ -1,7 +1,6 @@
 package com.emarsys.logger
 
 import cats.Id
-import cats.effect.Sync
 import com.emarsys.logger.internal.LoggingContextMagnet
 import com.emarsys.logger.levels.LogLevel
 import com.emarsys.logger.loggable._
@@ -52,9 +51,6 @@ object Logging {
 
   def create[F[_]](logFn: (LogLevel, String, LoggingContext) => F[Unit]): Logging[F] =
     (level: LogLevel, msg: String, ctx: LoggingContext) => logFn(level, msg, ctx)
-
-  def createEffectLogger[F[_]: Sync, G[_]: Sync](name: String): G[Logging[F]] =
-    Sync[G].delay(new LogbackEffectLogging[F](name))
 
   def createUnsafeLogger(name: String): Logging[Id] = new UnsafeLogstashLogging(name)
 }
