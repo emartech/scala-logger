@@ -1,10 +1,10 @@
 package com.emarsys.logger.testutil
 
+import org.scalacheck.Gen
+
 import java.time._
 import java.time.temporal.ChronoUnit.MILLIS
-
-import org.scalacheck.Gen
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object Arbitraries {
 

@@ -1,13 +1,14 @@
 package com.emarsys.logger.loggable
 
 import java.time._
-
 import org.scalacheck.Prop.forAll
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.Checkers
 import com.emarsys.logger.testutil.Arbitraries._
+
+import scala.annotation.nowarn
 
 class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with TypeCheckedTripleEquals {
   import LoggableEncoder.ops._
@@ -69,7 +70,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
       }
 
       "symbols" in {
-        val s = 'symbol
+        val s = Symbol("symbol")
         s.toLoggable should ===(LoggableString(s.name))
       }
 
@@ -199,6 +200,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class Simple(i: Int)
         case class Nested(s: Simple)
 
+        @nowarn
         implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
         val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.deriveLoggableEncoder
 
@@ -234,6 +236,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class Simple(i: Int)
         case class Nested(s: Simple)
 
+        @nowarn
         implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
         val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.deriveLoggableEncoder
 

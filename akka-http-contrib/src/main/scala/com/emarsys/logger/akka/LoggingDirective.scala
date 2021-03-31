@@ -1,13 +1,13 @@
 package com.emarsys.logger.akka
 
-import java.util.UUID
-
-import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.server.Directive1
 import akka.http.scaladsl.server.Directives.{extractRequest, provide, respondWithHeader}
 import com.emarsys.logger.LoggingContext
 import com.emarsys.logger.syntax._
+
+import java.util.UUID
 
 trait LoggingDirective {
 
@@ -30,7 +30,7 @@ trait LoggingDirective {
   private def generateRequestId(request: HttpRequest)(config: LoggingDirectiveConfig) =
     request.headers.find(_.lowercaseName == config.requestIdHeader.toLowerCase) match {
       case Some(HttpHeader(_, id)) => id
-      case None                    => UUID.randomUUID().toString
+      case _                       => UUID.randomUUID().toString
     }
 
   private def extendLoggingContext(

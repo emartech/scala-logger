@@ -8,7 +8,6 @@ import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
 import simulacrum.typeclass
 
 import scala.annotation.implicitNotFound
-import scala.language.implicitConversions
 
 @implicitNotFound("""
   Cannot use a value of type ${A} as a log parameter, as no implicit
@@ -33,7 +32,7 @@ object LoggableEncoder
     override def contramap[A, B](fa: LoggableEncoder[A])(f: B => A): LoggableEncoder[B] = b => fa.toLoggable(f(b))
   }
 
-  implicit lazy val loggableValue: LoggableEncoder[LoggableValue] = identity[LoggableValue]
+  implicit lazy val loggableValue: LoggableEncoder[LoggableValue] = identity[LoggableValue](_)
   implicit lazy val long: LoggableEncoder[Long]                   = LoggableIntegral(_)
   implicit lazy val double: LoggableEncoder[Double]               = LoggableFloating(_)
   implicit lazy val boolean: LoggableEncoder[Boolean]             = LoggableBoolean(_)

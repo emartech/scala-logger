@@ -11,7 +11,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.slf4j.{LoggerFactory, Marker}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait LoggingBehavior[F[_]] { this: AnyFlatSpec with Matchers with TypeCheckedTripleEquals =>
   type SimpleLogFn       = (Logging[F], String, LoggingContext) => F[Unit]

@@ -16,6 +16,7 @@ object BuildHelper {
     "-Ywarn-dead-code",
     "-Ywarn-extra-implicit",
     "-opt-warnings",
+    "-Xfatal-warnings",
     s"-target:jvm-$targetJavaVersion"
   )
 

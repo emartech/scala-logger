@@ -50,8 +50,8 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
 
       val lc = LoggingContext("")
 
-      implicit val m = Monad[Logged[Id, ?]]
-      implicit val c = Context[Logged[Id, ?]]
+      implicit val m = Monad[Logged[Id, *]]
+      implicit val c = Context[Logged[Id, *]]
       val magnet     = getMagnet
 
       var resultContext: LoggingContext = null

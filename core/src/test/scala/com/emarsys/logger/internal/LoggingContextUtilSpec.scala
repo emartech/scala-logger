@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.slf4j.Marker
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class LoggingContextUtilSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 

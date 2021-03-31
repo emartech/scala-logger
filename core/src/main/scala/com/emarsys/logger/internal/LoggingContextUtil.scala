@@ -5,7 +5,7 @@ import com.emarsys.logger.loggable._
 import net.logstash.logback.marker.Markers._
 import org.slf4j.Marker
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object LoggingContextUtil {
 
