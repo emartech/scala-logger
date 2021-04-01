@@ -29,7 +29,7 @@ object Dependencies {
 
   val coreDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel"       %% "cats-core"                % "2.4.2",
+      "org.typelevel"       %% "cats-core"                % "2.5.0",
       "org.typelevel"       %% "cats-mtl"                 % "1.1.2",
       "org.typelevel"       %% "simulacrum"               % "1.0.1",
       "com.propensive"      %% "magnolia"                 % "0.17.0",
