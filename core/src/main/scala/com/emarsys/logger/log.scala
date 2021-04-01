@@ -19,9 +19,6 @@ object log {
   def warn[F[_]: Logging](cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].warn(cause)
 
-  def error[F[_]: Logging](cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    Logging[F].error(cause, msg)
-
   def warn[F[_]: Logging](cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].warn(cause, msg)
 
@@ -30,6 +27,9 @@ object log {
 
   def error[F[_]: Logging](cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].error(cause)
+
+  def error[F[_]: Logging](cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
+    Logging[F].error(cause, msg)
 
   def log[F[_]: Logging](level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] =
     Logging[F].log(level, msg, ctx)
