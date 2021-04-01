@@ -5,13 +5,14 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.server.Directive1
 import akka.http.scaladsl.server.Directives.{extractRequest, provide, respondWithHeader}
 import com.emarsys.logger.LoggingContext
+import com.emarsys.logger.internal.LoggableEncoded
 import com.emarsys.logger.syntax._
 
 import java.util.UUID
 
 trait LoggingDirective {
 
-  type LogEntry = (String, HasLoggableEncoder)
+  type LogEntry = (String, LoggableEncoded)
 
   def withAkkaLoggingContext(requestLogEntries: LogEntry*)(
       loggingContext: LoggingContext = LoggingContext("unknown transactionId"),

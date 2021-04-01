@@ -1,57 +1,69 @@
 package com.emarsys.logger
 
 import cats.data.ReaderT
-import cats.{Applicative, MonadError}
-import com.emarsys.logger.internal.{LoggingContextMagnet, VarArgLoggableEncoder}
-import com.emarsys.logger.loggable.{LoggableObject, LoggableValue}
 import cats.syntax.applicativeError._
 import cats.syntax.flatMap._
+import cats.{Applicative, MonadError}
+import com.emarsys.logger.internal.{LoggableEncoded, LoggingContextMagnet}
+import com.emarsys.logger.loggable.LoggableObject
+import com.emarsys.logger.{log => logo}
 
 import scala.language.implicitConversions
 
-trait LoggerSyntax extends VarArgLoggableEncoder {
+trait LoggerSyntax {
 
+  @deprecated("Use com.emarsys.logger.log object instead", since = "0.8.0")
   def log[F[_]](implicit logging: Logging[F]): Logging[F] = logging
 
   implicit final def toLoggingOps[F[_], A](fa: F[A]): LoggingOps[F, A] = new LoggingOps(fa)
 
   implicit final def toLoggedOps[F[_], A](fa: F[A]): LoggedOps[F, A] = new LoggedOps(fa)
 
-  implicit class LoggingContextOps(lc: LoggingContext) {
+  implicit final def toLoggingContextOps(lc: LoggingContext): LoggingContextOps = new LoggingContextOps(lc)
 
-    def addParameters(params: (String, HasLoggableEncoder)*): LoggingContext = {
-      val extendedLogData = params.asInstanceOf[Seq[(String, LoggableValue)]].foldLeft(lc.logData.obj) {
-        case (data, (key, value)) => data + ((key, value))
-      }
-      lc.copy(logData = LoggableObject(extendedLogData))
-    }
-  }
+  implicit final def toContextExtensionOps[F[_], A](fa: F[A]): ContextExtensionOps[F, A] = new ContextExtensionOps(fa)
 
-  implicit class ContextExtensionOps[F[_], A](fa: F[A]) {
+  @deprecated("Use com.emarsys.logger.log.withContext instead", since = "0.8.0")
+  def withContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = logo.withContext(block)
 
-    def withExtendedContext(params: (String, HasLoggableEncoder)*)(implicit context: Context[F]): F[A] =
-      extendContext(params: _*)(fa)
-  }
+  @deprecated("Use com.emarsys.logger.log.getContext instead", since = "0.8.0")
+  def getReaderContext[F[_]: Applicative]: Logged[F, LoggingContext] = logo.getContext[Logged[F, *]]
 
-  def withContext[F[_], A](block: LoggingContext => F[A]): Logged[F, A] = ReaderT(block)
+  @deprecated("Use com.emarsys.logger.log.getContext instead", since = "0.8.0")
+  def getContext[F[_]: Context]: F[LoggingContext] = logo.getContext
 
-  def getReaderContext[F[_]: Applicative]: Logged[F, LoggingContext] = ReaderT.ask[F, LoggingContext]
-
-  def getContext[F[_]: Context]: F[LoggingContext] = Context[F].ask
-
+  @deprecated("Use com.emarsys.logger.log.extendReaderContext instead", since = "0.8.0")
   def extendReaderContext[F[_], A](
       ctxExtender: LoggingContext => LoggingContext
   )(block: LoggingContext => F[A]): Logged[F, A] =
-    ReaderT.local(ctxExtender)(ReaderT(block))
+    logo.extendReaderContext(ctxExtender)(block)
 
+  @deprecated("Use com.emarsys.logger.log.modifyContext instead", since = "0.8.0")
   def modifyContext[F[_]: Context, A](ctxExtender: LoggingContext => LoggingContext)(fa: => F[A]): F[A] =
-    Context[F].local(fa)(ctxExtender)
+    logo.modifyContext(ctxExtender)(fa)
 
-  def extendContext[F[_]: Context, A](params: (String, HasLoggableEncoder)*)(fa: => F[A]): F[A] =
-    modifyContext(_.addParameters(params: _*))(fa)
+  @deprecated("Use com.emarsys.logger.log.extendContext instead", since = "0.8.0")
+  def extendContext[F[_]: Context, A](params: (String, LoggableEncoded)*)(fa: => F[A]): F[A] =
+    logo.extendContext(params: _*)(fa)
 }
 
-final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
+final class LoggingContextOps private[logger] (val lc: LoggingContext) extends AnyVal {
+
+  def addParameters(params: (String, LoggableEncoded)*): LoggingContext = {
+    val extendedLogData = params.foldLeft(lc.logData.obj) { case (data, (key, value)) =>
+      data + ((key, value.loggableValue))
+    }
+    lc.copy(logData = LoggableObject(extendedLogData))
+  }
+}
+
+final class ContextExtensionOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
+
+  def withExtendedContext(params: (String, LoggableEncoded)*)(implicit context: Context[F]): F[A] =
+    logo.extendContext(params: _*)(fa)
+}
+
+final class LoggingOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
 
   def logFailure(implicit logging: Logging[F], me: MonadError[F, Throwable], ctx: LoggingContextMagnet[F]): F[A] =
     fa.onError { case error: Throwable =>
@@ -131,6 +143,6 @@ final class LoggingOps[F[_], A](val fa: F[A]) extends AnyVal {
     Context[F].local(fa)(ctxExtender)
 }
 
-final class LoggedOps[F[_], A](val fa: F[A]) extends AnyVal {
+final class LoggedOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
   def toLogged: Logged[F, A] = ReaderT(_ => fa)
 }

@@ -4,19 +4,19 @@ import cats.data.Chain
 import cats.effect.std.CountDownLatch
 import cats.effect.{IO, Ref}
 import com.emarsys.logger.levels.LogLevel
-import com.emarsys.logger.{Context, Logging, LoggingContext}
+import com.emarsys.logger.{log, Context, Logging, LoggingContext}
 import org.scalatest.compatible.Assertion
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class CatsEffectFiberLocalContextSpec extends AnyWordSpecLike {
   import cats.effect.unsafe.implicits.global
-  import com.emarsys.logger.syntax._
+  import com.emarsys.logger.syntax.toContextExtensionOps
 
   val initialLoggingContext: LoggingContext = LoggingContext("hello")
 
   case class Call(level: LogLevel, message: String, loggingContext: LoggingContext)
 
-  def testLogScope(f: Logging[IO] => Context[IO] => IO[_]): Chain[Call] = {
+  def testLogScope[A](f: Logging[IO] => Context[IO] => IO[A]): Chain[Call] = {
     val io = for {
       ref <- Ref.of[IO, Chain[Call]](Chain.empty)
       logging = Logging.create((level, msg, ctx) => ref.update(_ :+ Call(level, msg, ctx)))

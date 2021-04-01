@@ -5,11 +5,11 @@ import com.emarsys.logger.Logging
 
 trait UnsafeInstances extends UnsafeIdLoggingInstance
 
-trait UnsafeIdLoggingInstance extends UnsafeApplicativeInstance {
+private [unsafe] trait UnsafeIdLoggingInstance extends UnsafeApplicativeInstance {
   implicit lazy val defaultUnsafeLoggingInstance: Logging[Id] = Logging.createUnsafeLogger("default")
 }
 
-trait UnsafeApplicativeInstance {
+private [unsafe] trait UnsafeApplicativeInstance {
   import cats.syntax.applicative._
 
   implicit def applicativeLoggingInstance[F[_]: Applicative](implicit underlying: Logging[Id]): Logging[F] =

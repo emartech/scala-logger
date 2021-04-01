@@ -48,12 +48,11 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
     """
       |import cats.effect.IO
       |import com.emarsys.logger._
-      |import com.emarsys.logger.syntax._
       |
       |implicit val logger: Logging[IO] = CatsEffectLogging.createEffectLogger[IO]("default").unsafeRunSync()
       |implicit val lc: LoggingContext = LoggingContext("")
       |
-      |log[IO].warn("oh noe")
+      |log.warn("oh noe")
       """.stripMargin should compile
   }
 
@@ -61,13 +60,11 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
     """
       |import cats.effect.IO
       |import com.emarsys.logger._
-      |import com.emarsys.logger.syntax._
-      |
-      |type LoggedIO[A] = Logged[IO, A]
+      |import com.emarsys.logger.ce._
       |
       |implicit val logger: Logging[LoggedIO] = CatsEffectLogging.createEffectLoggerG[LoggedIO, IO]("default").unsafeRunSync()
       |
-      |log[LoggedIO].warn("oh noe")
+      |log.warn("oh noe")
       """.stripMargin should compile
   }
 
