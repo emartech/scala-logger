@@ -12,7 +12,7 @@ object Dependencies {
 
   val stdTestDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scalatest"     %% "scalatest"       % "3.2.6",
+      "org.scalatest"     %% "scalatest"       % "3.2.7",
       "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0",
       "org.scalacheck"    %% "scalacheck"      % "1.15.3"
     ).map(_ % Test)
