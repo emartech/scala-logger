@@ -1,9 +1,10 @@
-package com.emarsys.logger
+package com.emarsys.logger.ce
 
 import cats.data.Chain
 import cats.effect.std.CountDownLatch
 import cats.effect.{IO, Ref}
 import com.emarsys.logger.levels.LogLevel
+import com.emarsys.logger.{Context, Logging, LoggingContext}
 import org.scalatest.compatible.Assertion
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -19,7 +20,7 @@ class CatsEffectFiberLocalContextSpec extends AnyWordSpecLike {
     val io = for {
       ref <- Ref.of[IO, Chain[Call]](Chain.empty)
       logging = Logging.create((level, msg, ctx) => ref.update(_ :+ Call(level, msg, ctx)))
-      context <- CatsEffectLogging.fiberLocalContext(initialLoggingContext)
+      context <- CatsEffectLogging.createIOLocalContext(initialLoggingContext)
       _       <- f(logging)(context)
       result  <- ref.get
     } yield result

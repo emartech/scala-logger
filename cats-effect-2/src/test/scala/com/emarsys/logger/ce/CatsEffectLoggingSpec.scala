@@ -1,13 +1,13 @@
-package com.emarsys.logger
+package com.emarsys.logger.ce
 
 import cats.effect.IO
 import ch.qos.logback.classic.Level
+import com.emarsys.logger.{Logging, LoggingBehavior}
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[IO] {
-  import cats.effect.unsafe.implicits.global
 
   override def runF(f: IO[Unit]): Unit = f.unsafeRunSync()
 
@@ -47,8 +47,8 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
   "CatsEffectLogging" should "compile with IO" in {
     """
       |import cats.effect.IO
+      |import com.emarsys.logger._
       |import com.emarsys.logger.syntax._
-      |import cats.effect.unsafe.implicits.global
       |
       |implicit val logger: Logging[IO] = CatsEffectLogging.createEffectLogger[IO]("default").unsafeRunSync()
       |implicit val lc: LoggingContext = LoggingContext("")
@@ -60,8 +60,8 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
   it should "compile with Logged[IO]" in {
     """
       |import cats.effect.IO
+      |import com.emarsys.logger._
       |import com.emarsys.logger.syntax._
-      |import cats.effect.unsafe.implicits.global
       |
       |type LoggedIO[A] = Logged[IO, A]
       |
@@ -70,4 +70,5 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
       |log[LoggedIO].warn("oh noe")
       """.stripMargin should compile
   }
+
 }

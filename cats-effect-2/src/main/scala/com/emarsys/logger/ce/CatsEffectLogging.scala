@@ -1,12 +1,12 @@
 package com.emarsys.logger
+package ce
 
 import cats.effect.Sync
 import com.emarsys.logger.internal.LoggingContextUtil
 import com.emarsys.logger.levels.LogLevel
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
-class CatsEffectLogging[F[_]: Sync] private[logger] (name: String) extends Logging[F] {
-  private val logger = LoggerFactory.getLogger(name)
+private class CatsEffectLogging[F[_]: Sync] private[ce] (logger: Logger) extends Logging[F] {
 
   override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = Sync[F].delay {
     lazy val marker = LoggingContextUtil.toMarker(ctx)
@@ -24,10 +24,11 @@ class CatsEffectLogging[F[_]: Sync] private[logger] (name: String) extends Loggi
 }
 
 object CatsEffectLogging {
+  import cats.syntax.functor._
 
   def createEffectLogger[F[_]: Sync](name: String): F[Logging[F]] = createEffectLoggerG[F, F](name)
 
   def createEffectLoggerG[F[_]: Sync, G[_]: Sync](name: String): G[Logging[F]] =
-    Sync[G].delay(new CatsEffectLogging[F](name))
+    Sync[G].delay(LoggerFactory.getLogger(name)).map(new CatsEffectLogging[F](_))
 
 }
