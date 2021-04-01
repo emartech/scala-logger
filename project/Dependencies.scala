@@ -47,7 +47,7 @@ object Dependencies {
 
   val catsEffect2Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "2.4.1"
+      "org.typelevel" %% "cats-effect" % "3.0.1"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
