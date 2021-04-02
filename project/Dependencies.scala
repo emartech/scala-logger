@@ -35,7 +35,7 @@ object Dependencies {
       "com.propensive"      %% "magnolia"                 % "0.17.0",
       "ch.qos.logback"       % "logback-classic"          % "1.2.3",
       "net.logstash.logback" % "logstash-logback-encoder" % "6.6",
-      "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
+      "org.scala-lang"       % "scala-reflect"            % scalaVersion.value % Provided
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
