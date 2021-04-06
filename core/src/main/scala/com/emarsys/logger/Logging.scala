@@ -48,6 +48,7 @@ trait Logging[F[_]] {
 }
 
 object Logging {
+  def apply[F[_]](implicit ev: Logging[F]): Logging[F] = ev
 
   def create[F[_]](logFn: (LogLevel, String, LoggingContext) => F[Unit]): Logging[F] =
     (level: LogLevel, msg: String, ctx: LoggingContext) => logFn(level, msg, ctx)

@@ -12,7 +12,7 @@ object Dependencies {
 
   val stdTestDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scalatest"     %% "scalatest"       % "3.2.6",
+      "org.scalatest"     %% "scalatest"       % "3.2.7",
       "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0",
       "org.scalacheck"    %% "scalacheck"      % "1.15.3"
     ).map(_ % Test)
@@ -29,13 +29,14 @@ object Dependencies {
 
   val coreDependencies = Seq(
     libraryDependencies ++= Seq(
+
       "org.typelevel"       %% "cats-core"                % "2.5.0",
-      "org.typelevel"       %% "cats-mtl"                 % "1.1.2",
+      "org.typelevel"       %% "cats-mtl"                 % "1.1.3",
       "org.typelevel"       %% "simulacrum"               % "1.0.1",
       "com.propensive"      %% "magnolia"                 % "0.17.0",
       "ch.qos.logback"       % "logback-classic"          % "1.2.3",
       "net.logstash.logback" % "logstash-logback-encoder" % "6.6",
-      "org.scala-lang"       % "scala-reflect"            % scalaVersion.value
+      "org.scala-lang"       % "scala-reflect"            % scalaVersion.value % Provided
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
