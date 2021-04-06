@@ -44,7 +44,7 @@ object log {
   def setContext[F[_]: Context, A](newContext: LoggingContext)(fa: => F[A]): F[A] =
     modifyContext(_ => newContext)(fa)
 
-  def extendContext[F[_]: Context, A](params: (String, LoggableEncoded)*)(fa: => F[A]): F[A] =
+  def extendContext[F[_]: Context, A](params: (String, LoggableEncoded.Type)*)(fa: => F[A]): F[A] =
     modifyContext(_.addParameters(params: _*))(fa)
 
   def extendReaderContext[F[_], A](

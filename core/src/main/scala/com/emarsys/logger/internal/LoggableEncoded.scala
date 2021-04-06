@@ -5,12 +5,12 @@ import com.emarsys.logger.loggable.{LoggableEncoder, LoggableValue}
 import scala.annotation.implicitAmbiguous
 import scala.language.implicitConversions
 
-final case class LoggableEncoded private[internal] (loggableValue: LoggableValue) extends AnyVal
-
 object LoggableEncoded extends AmbiguousLoggableEncodedConversion {
+  sealed trait LoggableEncodedTag
+  type Type = LoggableValue with LoggableEncodedTag
 
-  implicit def materialize[A](a: A)(implicit enc: LoggableEncoder[A]): LoggableEncoded =
-    LoggableEncoded(enc.toLoggable(a))
+  implicit def materialize[A](a: A)(implicit enc: LoggableEncoder[A]): LoggableEncoded.Type =
+    enc.toLoggable(a).asInstanceOf[LoggableEncoded.Type]
 }
 
 private[internal] trait AmbiguousLoggableEncodedConversion {
@@ -23,6 +23,6 @@ private[internal] trait AmbiguousLoggableEncodedConversion {
   is a case class or a sealed trait hierarchy, you may use the
   LoggableEncoder.deriveLoggableEncoder method to automatically generate it.
   """)
-  implicit def ambiguousLoggableEncodedMaterializer1[A](a: A): LoggableEncoded = ???
-  implicit def ambiguousLoggableEncodedMaterializer2[A](a: A): LoggableEncoded = ???
+  implicit def ambiguousLoggableEncodedMaterializer1[A](a: A): LoggableEncoded.Type = ???
+  implicit def ambiguousLoggableEncodedMaterializer2[A](a: A): LoggableEncoded.Type = ???
 }

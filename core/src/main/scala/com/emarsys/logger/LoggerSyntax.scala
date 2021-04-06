@@ -43,15 +43,15 @@ trait LoggerSyntax {
     logo.modifyContext(ctxExtender)(fa)
 
   @deprecated("Use com.emarsys.logger.log.extendContext instead", since = "0.8.0")
-  def extendContext[F[_]: Context, A](params: (String, LoggableEncoded)*)(fa: => F[A]): F[A] =
+  def extendContext[F[_]: Context, A](params: (String, LoggableEncoded.Type)*)(fa: => F[A]): F[A] =
     logo.extendContext(params: _*)(fa)
 }
 
 final class LoggingContextOps private[logger] (val lc: LoggingContext) extends AnyVal {
 
-  def addParameters(params: (String, LoggableEncoded)*): LoggingContext = {
+  def addParameters(params: (String, LoggableEncoded.Type)*): LoggingContext = {
     val extendedLogData = params.foldLeft(lc.logData.obj) { case (data, (key, value)) =>
-      data + ((key, value.loggableValue))
+      data + ((key, value))
     }
     lc.copy(logData = LoggableObject(extendedLogData))
   }
@@ -59,7 +59,7 @@ final class LoggingContextOps private[logger] (val lc: LoggingContext) extends A
 
 final class ContextExtensionOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
 
-  def withExtendedContext(params: (String, LoggableEncoded)*)(implicit context: Context[F]): F[A] =
+  def withExtendedContext(params: (String, LoggableEncoded.Type)*)(implicit context: Context[F]): F[A] =
     logo.extendContext(params: _*)(fa)
 }
 

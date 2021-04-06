@@ -12,7 +12,7 @@ import java.util.UUID
 
 trait LoggingDirective {
 
-  type LogEntry = (String, LoggableEncoded)
+  type LogEntry = (String, LoggableEncoded.Type)
 
   def withAkkaLoggingContext(requestLogEntries: LogEntry*)(
       loggingContext: LoggingContext = LoggingContext("unknown transactionId"),
