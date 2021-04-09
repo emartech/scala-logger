@@ -51,7 +51,7 @@ object BuildHelper {
   def stdSettings(prjName: String) = Seq(
     name := prjName,
     crossScalaVersions := Seq(scala212, scala213),
-    scalaVersion in ThisBuild := scala213,
+    scalaVersion := scala213,
     scalacOptions := stdOptions ++ versionSpecificOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", targetJavaVersion, "-target", targetJavaVersion)
   )

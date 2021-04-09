@@ -13,7 +13,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "scala-logger",
-    skip in publish := true
+    publish / skip := true
   )
   .aggregate(
     core,

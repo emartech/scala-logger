@@ -4,8 +4,6 @@ import java.time._
 
 import cats.syntax.all._
 import cats.{Contravariant, Show, Traverse}
-import com.emarsys.logger.loggable.LoggableEncoder.ops.toAllLoggableEncoderOps
-import simulacrum.typeclass
 
 import scala.annotation.implicitNotFound
 
@@ -17,12 +15,13 @@ import scala.annotation.implicitNotFound
   is a case class or a sealed trait hierarchy, you may use the
   LoggableEncoder.deriveLoggableEncoder method to automatically generate it.
   """)
-@typeclass trait LoggableEncoder[A] {
+trait LoggableEncoder[A] {
   def toLoggable(a: A): LoggableValue
 }
 
 object LoggableEncoder
     extends LoggableEncoderStdlib1
+    with LoggableEncoderTypeClassInterface
     with LoggableEncoderJdk8DateTime
     with LoggableEncoderScalaDuration
     with LoggableEncoderStdlib2
@@ -52,6 +51,7 @@ object LoggableEncoder
 
 private[loggable] trait LoggableEncoderStdlib1 {
   self: LoggableEncoder.type =>
+  import com.emarsys.logger.syntax._
 
   implicit def option[A: LoggableEncoder]: LoggableEncoder[Option[A]] = {
     case Some(value) => value.toLoggable
@@ -95,4 +95,39 @@ private[loggable] trait LoggableEncoderStdlib2 {
   self: LoggableEncoderStdlib1 =>
 
   implicit def traversable[T[_]: Traverse, A: LoggableEncoder]: LoggableEncoder[T[A]] = list[A].contramap(_.toList)
+}
+
+private[loggable] trait LoggableEncoderTypeClassInterface {
+  def apply[A](implicit instance: LoggableEncoder[A]): LoggableEncoder[A] = instance
+
+  trait Ops[A] {
+    def typeClassInstance: LoggableEncoder[A]
+    def self: A
+    def toLoggable: LoggableValue = typeClassInstance.toLoggable(self)
+  }
+
+  trait ToLoggableEncoderOps {
+    import scala.language.implicitConversions
+    implicit def toLoggableEncoderOps[A](target: A)(implicit tc: LoggableEncoder[A]): Ops[A] = new Ops[A] {
+      override def self: A = target
+      override def typeClassInstance: LoggableEncoder[A] = tc
+    }
+  }
+
+  @deprecated("Use com.emarsys.logger.syntax._ import", since = "0.8.0")
+  object nonInheritedOps extends ToLoggableEncoderOps
+
+  @deprecated("Use LoggableEncoder.Ops[A] instead", since = "0.8.0")
+  trait AllOps[A] extends Ops[A] {
+    def typeClassInstance: LoggableEncoder[A]
+  }
+
+  @deprecated("Use com.emarsys.logger.syntax._ import", since = "0.8.0")
+  object ops {
+    import scala.language.implicitConversions
+    implicit def toLoggableEncoderOps[A](target: A)(implicit tc: LoggableEncoder[A]): AllOps[A] = new AllOps[A] {
+      override def self: A = target
+      override def typeClassInstance: LoggableEncoder[A] = tc
+    }
+  }
 }

@@ -4,7 +4,7 @@ import com.emarsys.logger.loggable.{LoggableEncoder, LoggableObject}
 
 case class LoggingContext private (transactionId: String, logData: LoggableObject) {
   import cats.syntax.all._
-  import LoggableEncoder.ops._
+  import com.emarsys.logger.syntax._
 
   def <>[T: LoggableEncoder](param: (String, T)): LoggingContext = addParameter(param)
 
