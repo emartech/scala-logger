@@ -25,5 +25,8 @@ trait GenericLoggableEncoder {
       ctx.dispatch(a)(sub => sub.typeclass.toLoggable(sub.cast(a)))
   }
 
+  @deprecated("Use com.emarsys.logger.loggable.LoggableEncoder.derived instead", since = "0.8.0")
   def deriveLoggableEncoder[A]: LoggableEncoder[A] = macro Magnolia.gen[A]
+
+  def derived[A]: LoggableEncoder[A] = macro Magnolia.gen[A]
 }

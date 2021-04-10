@@ -188,7 +188,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
       "simple case class" in {
         case class Simple(i: Int)
 
-        val encoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
+        val encoder: LoggableEncoder[Simple] = LoggableEncoder.derived
 
         val simple = Simple(42)
 
@@ -200,8 +200,8 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class Nested(s: Simple)
 
         @nowarn
-        implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
-        val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.deriveLoggableEncoder
+        implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.derived
+        val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.derived
 
         val nested = Nested(Simple(42))
 
@@ -215,7 +215,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class A(x: Int)    extends T
         case class B(y: String) extends T
 
-        implicit val encoder: LoggableEncoder[T] = LoggableEncoder.deriveLoggableEncoder
+        implicit val encoder: LoggableEncoder[T] = LoggableEncoder.derived
 
         encoder.toLoggable(A(42)) should ===(LoggableObject("x" -> LoggableIntegral(42)))
         encoder.toLoggable(B("42")) should ===(LoggableObject("y" -> LoggableString("42")))
@@ -226,7 +226,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
       "simple case class" in {
         case class Simple(i: Int)
 
-        implicit val encoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
+        implicit val encoder: LoggableEncoder[Simple] = LoggableEncoder.derived
 
         encoder.toLoggable(null) should ===(LoggableNil)
       }
@@ -236,8 +236,8 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class Nested(s: Simple)
 
         @nowarn
-        implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.deriveLoggableEncoder
-        val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.deriveLoggableEncoder
+        implicit val simpleEncoder: LoggableEncoder[Simple] = LoggableEncoder.derived
+        val nestedEncoder: LoggableEncoder[Nested]          = LoggableEncoder.derived
 
         val nested = Nested(null)
 
@@ -249,7 +249,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         case class A(x: Int)    extends T
         case class B(y: String) extends T
 
-        implicit val encoder: LoggableEncoder[T] = LoggableEncoder.deriveLoggableEncoder
+        implicit val encoder: LoggableEncoder[T] = LoggableEncoder.derived
 
         encoder.toLoggable(null) should ===(LoggableNil)
       }
