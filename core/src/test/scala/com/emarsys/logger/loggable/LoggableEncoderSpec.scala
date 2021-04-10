@@ -10,7 +10,12 @@ import com.emarsys.logger.testutil.Arbitraries._
 
 import scala.annotation.nowarn
 
-class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with TypeCheckedTripleEquals with LoggableEncoder.ToLoggableEncoderOps  {
+class LoggableEncoderSpec
+    extends AnyFreeSpec
+    with Checkers
+    with Matchers
+    with TypeCheckedTripleEquals
+    with LoggableEncoder.ToLoggableEncoderOps {
 
   "LoggableEncoder should" - {
     "be able to encode" - {
@@ -220,6 +225,26 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         encoder.toLoggable(A(42)) should ===(LoggableObject("x" -> LoggableIntegral(42)))
         encoder.toLoggable(B("42")) should ===(LoggableObject("y" -> LoggableString("42")))
       }
+
+      "recursive GADT" in {
+        sealed trait Tree[A]
+        case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+        case class Leaf[A](elem: A)                       extends Tree[A]
+
+        implicit lazy val encoder: LoggableEncoder[Tree[Int]] = LoggableEncoder.derived
+
+        val tree: Tree[Int] = Node(Leaf(0), Node(Leaf(1), Leaf(2)))
+
+        encoder.toLoggable(tree) should ===(
+          LoggableObject(
+            "left" -> LoggableObject("elem" -> LoggableIntegral(0)),
+            "right" -> LoggableObject(
+              "left"  -> LoggableObject("elem" -> LoggableIntegral(1)),
+              "right" -> LoggableObject("elem" -> LoggableIntegral(2))
+            )
+          )
+        )
+      }
     }
 
     "handle null for" - {
@@ -252,6 +277,26 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
         implicit val encoder: LoggableEncoder[T] = LoggableEncoder.derived
 
         encoder.toLoggable(null) should ===(LoggableNil)
+      }
+
+      "recursive GADT" in {
+        sealed trait Tree[A]
+        case class Node[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+        case class Leaf[A](elem: A)                       extends Tree[A]
+
+        implicit lazy val encoder: LoggableEncoder[Tree[Int]] = LoggableEncoder.derived
+
+        val tree: Tree[Int] = Node(null, Node(Leaf(1), null))
+
+        encoder.toLoggable(tree) should ===(
+          LoggableObject(
+            "left" -> LoggableNil,
+            "right" -> LoggableObject(
+              "left"  -> LoggableObject("elem" -> LoggableIntegral(1)),
+              "right" -> LoggableNil
+            )
+          )
+        )
       }
     }
   }
