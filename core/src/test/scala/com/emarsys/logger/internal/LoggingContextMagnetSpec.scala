@@ -1,10 +1,11 @@
 package com.emarsys.logger.internal
 
-import cats.{Id, Monad}
-import com.emarsys.logger.{Context, Logged, LoggingContext}
+import cats.Id
+import com.emarsys.logger.Logged
+import com.emarsys.logger.LoggingContext
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 
@@ -13,26 +14,27 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
   "LoggingContextMagnet" should {
     "construct from LoggingContext" in {
       """
-        |  val lc: LoggingContext = LoggingContext("")
-        |  getMagnet[Id](lc)
-      """.stripMargin should compile
+        val lc: LoggingContext = LoggingContext("")
+        getMagnet[Id](lc)
+      """ should compile
     }
 
     "construct from implicit LoggingContext" in {
       """
-        |  implicit val lc: LoggingContext = LoggingContext("")
-        |  getMagnet[Id]
-      """.stripMargin should compile
+        implicit val lc: LoggingContext = LoggingContext("")
+        getMagnet[Id]
+      """ should compile
     }
 
     "construct from Context and Monad typeclasses" in {
       """
-        |  import cats.{Id, Monad}
-        |
-        |  implicit val m: Monad[Id] = null
-        |  implicit val ctx: Context[Id] = null
-        |  getMagnet
-      """.stripMargin should compile
+        import cats.{Id, Monad}
+        import com.emarsys.logger.Context
+
+        implicit val m: Monad[Id] = null
+        implicit val ctx: Context[Id] = null
+        getMagnet
+      """ should compile
     }
 
     "return the context when constructed from a logging context" in {
@@ -47,17 +49,18 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
 
     "return the context when constructed from a monad and context typeclasses" in {
       import cats.syntax.applicative._
+      // the cats.catsInstancesForId import is only necessary for scala 3
+      // FIXME: is this a scala 3 bug?
+      import cats.catsInstancesForId
 
       val lc = LoggingContext("")
 
-      implicit val m = Monad[Logged[Id, *]]
-      implicit val c = Context[Logged[Id, *]]
-      val magnet     = getMagnet
+      val magnet = getMagnet[Logged[Id, *]]
 
       var resultContext: LoggingContext = null
       val a = magnet { ctx =>
         resultContext = ctx
-        ().pure
+        ().pure[Logged[Id, *]]
       }
 
       a.run(lc)

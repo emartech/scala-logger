@@ -25,7 +25,7 @@ lazy val root = project
 lazy val core =
   project
     .in(file("core"))
-    .settings(stdSettings("scala-logger"))
+    .settings(stdSettings("scala-logger", withScala3 = true))
     .settings(coreDependencies)
     .settings(
       // logging tests cannot run in parallel as slf4j sometimes creates a SubstituteLogger
@@ -36,21 +36,21 @@ lazy val core =
 lazy val catsEffect2 =
   project
     .in(file("cats-effect-2"))
-    .settings(stdSettings("scala-logger-ce2"))
+    .settings(stdSettings("scala-logger-ce2", withScala3 = true))
     .settings(catsEffect2Dependencies)
     .dependsOn(core % "compile->compile;test->test")
 
 lazy val catsEffect3 =
   project
     .in(file("cats-effect-3"))
-    .settings(stdSettings("scala-logger-ce3"))
+    .settings(stdSettings("scala-logger-ce3", withScala3 = true))
     .settings(catsEffect3Dependencies)
     .dependsOn(core % "compile->compile;test->test")
 
 lazy val akkaHttpContrib =
   project
     .in(file("akka-http-contrib"))
-    .settings(stdSettings("scala-logger-akka-http-contrib"))
+    .settings(stdSettings("scala-logger-akka-http-contrib", withScala3 = false))
     .settings(akkaHttpContribDependencies)
     .dependsOn(core)
 

@@ -47,27 +47,27 @@ class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTr
 
   "CatsEffectLogging" should "compile with IO" in {
     """
-      |import cats.effect.IO
-      |import cats.effect.unsafe.implicits.global
-      |import com.emarsys.logger._
-      |
-      |implicit val logger: Logging[IO] = CatsEffectLogging.createEffectLogger[IO]("default").unsafeRunSync()
-      |implicit val lc: LoggingContext = LoggingContext("")
-      |
-      |log.warn("oh noe")
-      """.stripMargin should compile
+      import cats.effect.IO
+      import cats.effect.unsafe.implicits.global
+      import com.emarsys.logger._
+
+      implicit val logger: Logging[IO] = CatsEffectLogging.createEffectLogger[IO]("default").unsafeRunSync()
+      implicit val lc: LoggingContext = LoggingContext("")
+
+      log.warn("oh noe")
+      """ should compile
   }
 
   it should "compile with Logged[IO]" in {
     """
-      |import cats.effect.IO
-      |import cats.effect.unsafe.implicits.global
-      |import com.emarsys.logger._
-      |import com.emarsys.logger.ce._
-      |
-      |implicit val logger: Logging[LoggedIO] = CatsEffectLogging.createEffectLoggerG[LoggedIO, IO]("default").unsafeRunSync()
-      |
-      |log.warn("oh noe")
-      """.stripMargin should compile
+      import cats.effect.IO
+      import cats.effect.unsafe.implicits.global
+      import com.emarsys.logger._
+      import com.emarsys.logger.ce._
+
+      implicit val logger: Logging[LoggedIO] = CatsEffectLogging.createEffectLoggerG[LoggedIO, IO]("default").unsafeRunSync()
+
+      log.warn("oh noe")
+      """ should compile
   }
 }

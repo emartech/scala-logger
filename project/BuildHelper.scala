@@ -1,10 +1,10 @@
 import sbt.Keys._
-import sbt.ThisBuild
 import sbt.librarymanagement.CrossVersion
 
 object BuildHelper {
   val scala212          = "2.12.13"
   val scala213          = "2.13.5"
+  val scala30           = "3.0.0-RC2"
   val targetJavaVersion = "1.8"
 
   private val stdOptions = Seq(
@@ -13,11 +13,7 @@ object BuildHelper {
     "UTF-8",
     "-feature",
     "-unchecked",
-    "-Ywarn-dead-code",
-    "-Ywarn-extra-implicit",
-    "-opt-warnings",
-    "-Xfatal-warnings",
-    s"-target:jvm-$targetJavaVersion"
+    "-Xfatal-warnings"
   )
 
   private val std2xOptions = Seq(
@@ -28,7 +24,11 @@ object BuildHelper {
     "-Xlint:_,-type-parameter-shadow",
     "-Ywarn-value-discard",
     "-Ywarn-numeric-widen",
-    "-Ywarn-unused:imports"
+    "-Ywarn-unused:imports",
+    "-Ywarn-dead-code",
+    "-Ywarn-extra-implicit",
+    "-opt-warnings",
+    s"-target:jvm-$targetJavaVersion"
   )
 
   private def versionSpecificOptions(scalaVersion: String) =
@@ -45,12 +45,14 @@ object BuildHelper {
           "-Ywarn-nullary-unit",
           "-Ypartial-unification"
         ) ++ std2xOptions
+      case Some((3, 0)) =>
+        Seq("-Ykind-projector")
       case _ => Seq.empty
     }
 
-  def stdSettings(prjName: String) = Seq(
+  def stdSettings(prjName: String, withScala3: Boolean) = Seq(
     name := prjName,
-    crossScalaVersions := Seq(scala212, scala213),
+    crossScalaVersions := Seq(scala212, scala213) ++ (if (withScala3) Seq(scala30) else Nil),
     scalaVersion := scala213,
     scalacOptions := stdOptions ++ versionSpecificOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", targetJavaVersion, "-target", targetJavaVersion)
