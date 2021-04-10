@@ -1,7 +1,8 @@
 package com.emarsys.logger.internal
 
-import cats.{Id, Monad}
-import com.emarsys.logger.{Context, Logged, LoggingContext}
+import cats.Id
+import com.emarsys.logger.Logged
+import com.emarsys.logger.LoggingContext
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -28,6 +29,7 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
     "construct from Context and Monad typeclasses" in {
       """
         import cats.{Id, Monad}
+        import com.emarsys.logger.Context
 
         implicit val m: Monad[Id] = null
         implicit val ctx: Context[Id] = null
@@ -47,17 +49,18 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
 
     "return the context when constructed from a monad and context typeclasses" in {
       import cats.syntax.applicative._
+      // the cats.catsInstancesForId import is only necessary for scala 3
+      // FIXME: is this a scala 3 bug?
+      import cats.catsInstancesForId
 
       val lc = LoggingContext("")
 
-      implicit lazy val m: Monad[Logged[Id, *]]   = Monad[Logged[Id, *]]
-      implicit lazy val c: Context[Logged[Id, *]] = Context[Logged[Id, *]]
-      val magnet                             = getMagnet
+      val magnet = getMagnet[Logged[Id, *]]
 
       var resultContext: LoggingContext = null
       val a = magnet { ctx =>
         resultContext = ctx
-        ().pure
+        ().pure[Logged[Id, *]]
       }
 
       a.run(lc)

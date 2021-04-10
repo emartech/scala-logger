@@ -32,11 +32,14 @@ class LoggingSpec extends AnyWordSpec with Matchers {
       """ should compile
     }
 
+    // the cats.catsInstancesForId import is only necessary for scala 3
+    // FIXME: is this a scala 3 bug?
     "compile with Logged[Id]" in {
       """
         import cats.Id
         import com.emarsys.logger.syntax._
         import com.emarsys.logger.unsafe.implicits._
+        import cats.catsInstancesForId
 
         type LoggedId[A] = Logged[Id, A]
 
