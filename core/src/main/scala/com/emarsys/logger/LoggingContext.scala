@@ -2,14 +2,13 @@ package com.emarsys.logger
 
 import com.emarsys.logger.loggable.{LoggableEncoder, LoggableObject}
 
-case class LoggingContext private (transactionId: String, logData: LoggableObject) {
-  import cats.syntax.all._
+case class LoggingContext(transactionId: String, logData: LoggableObject) {
   import com.emarsys.logger.syntax._
 
   def <>[T: LoggableEncoder](param: (String, T)): LoggingContext = addParameter(param)
 
   def addParameter[T: LoggableEncoder](param: (String, T)): LoggingContext = {
-    val encodedParam = param.map(_.toLoggable)
+    val encodedParam = param._1 -> param._2.toLoggable
     copy(logData = LoggableObject(logData.obj + encodedParam))
   }
 }

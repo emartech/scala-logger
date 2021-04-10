@@ -92,12 +92,14 @@ private[loggable] trait LoggableEncoderScalaDuration {
 }
 
 private[loggable] trait LoggableEncoderStdlib2 {
-  self: LoggableEncoderStdlib1 =>
+  self: LoggableEncoder.type with LoggableEncoderStdlib1 =>
 
   implicit def traversable[T[_]: Traverse, A: LoggableEncoder]: LoggableEncoder[T[A]] = list[A].contramap(_.toList)
 }
 
 private[loggable] trait LoggableEncoderTypeClassInterface {
+  self: LoggableEncoder.type =>
+
   def apply[A](implicit instance: LoggableEncoder[A]): LoggableEncoder[A] = instance
 
   trait Ops[A] {
