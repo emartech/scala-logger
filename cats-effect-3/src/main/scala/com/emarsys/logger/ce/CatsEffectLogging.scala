@@ -36,7 +36,7 @@ object CatsEffectLogging {
   def createIOLocalContext(initialLoggingContext: LoggingContext): IO[Context[IO]] =
     IOLocal[LoggingContext](initialLoggingContext).map(new IOLocalLocal(_))
 
-  private class IOLocalLocal private[ce] (localLoggingContext: IOLocal[LoggingContext])
+  private[ce] class IOLocalLocal private[ce] (localLoggingContext: IOLocal[LoggingContext])
       extends Local[IO, LoggingContext] {
     override def applicative: Applicative[IO] = implicitly
 

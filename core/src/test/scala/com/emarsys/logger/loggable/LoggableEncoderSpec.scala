@@ -93,7 +93,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
 
       "options" in {
         check {
-          forAll { o: Option[Int] =>
+          forAll { (o: Option[Int]) =>
             val expected = o match {
               case Some(i) => i.toLoggable
               case None    => LoggableNil
@@ -106,7 +106,7 @@ class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with T
 
       "eithers" in {
         check {
-          forAll { o: Either[String, Int] =>
+          forAll { (o: Either[String, Int]) =>
             val expected = o match {
               case Left(left)   => left.toLoggable
               case Right(right) => right.toLoggable

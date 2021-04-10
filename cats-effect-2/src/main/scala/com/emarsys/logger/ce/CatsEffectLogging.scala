@@ -6,7 +6,7 @@ import com.emarsys.logger.internal.LoggingContextUtil
 import com.emarsys.logger.levels.LogLevel
 import org.slf4j.{Logger, LoggerFactory}
 
-private class CatsEffectLogging[F[_]: Sync] private[ce] (logger: Logger) extends Logging[F] {
+private[ce] class CatsEffectLogging[F[_]: Sync] private[ce] (logger: Logger) extends Logging[F] {
 
   override def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] = Sync[F].delay {
     lazy val marker = LoggingContextUtil.toMarker(ctx)

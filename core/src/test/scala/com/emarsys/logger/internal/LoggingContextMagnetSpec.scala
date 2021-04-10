@@ -3,8 +3,8 @@ package com.emarsys.logger.internal
 import cats.{Id, Monad}
 import com.emarsys.logger.{Context, Logged, LoggingContext}
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
 
@@ -13,26 +13,26 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
   "LoggingContextMagnet" should {
     "construct from LoggingContext" in {
       """
-        |  val lc: LoggingContext = LoggingContext("")
-        |  getMagnet[Id](lc)
-      """.stripMargin should compile
+        val lc: LoggingContext = LoggingContext("")
+        getMagnet[Id](lc)
+      """ should compile
     }
 
     "construct from implicit LoggingContext" in {
       """
-        |  implicit val lc: LoggingContext = LoggingContext("")
-        |  getMagnet[Id]
-      """.stripMargin should compile
+        implicit val lc: LoggingContext = LoggingContext("")
+        getMagnet[Id]
+      """ should compile
     }
 
     "construct from Context and Monad typeclasses" in {
       """
-        |  import cats.{Id, Monad}
-        |
-        |  implicit val m: Monad[Id] = null
-        |  implicit val ctx: Context[Id] = null
-        |  getMagnet
-      """.stripMargin should compile
+        import cats.{Id, Monad}
+
+        implicit val m: Monad[Id] = null
+        implicit val ctx: Context[Id] = null
+        getMagnet
+      """ should compile
     }
 
     "return the context when constructed from a logging context" in {
@@ -50,9 +50,9 @@ class LoggingContextMagnetSpec extends AnyWordSpec with Matchers with TypeChecke
 
       val lc = LoggingContext("")
 
-      implicit val m = Monad[Logged[Id, *]]
-      implicit val c = Context[Logged[Id, *]]
-      val magnet     = getMagnet
+      implicit lazy val m: Monad[Logged[Id, *]]   = Monad[Logged[Id, *]]
+      implicit lazy val c: Context[Logged[Id, *]] = Context[Logged[Id, *]]
+      val magnet                             = getMagnet
 
       var resultContext: LoggingContext = null
       val a = magnet { ctx =>

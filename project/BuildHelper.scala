@@ -50,9 +50,9 @@ object BuildHelper {
       case _ => Seq.empty
     }
 
-  def stdSettings(prjName: String) = Seq(
+  def stdSettings(prjName: String, withScala3: Boolean) = Seq(
     name := prjName,
-    crossScalaVersions := Seq(scala212, scala213, scala30),
+    crossScalaVersions := Seq(scala212, scala213) ++ (if (withScala3) Seq(scala30) else Nil),
     scalaVersion := scala213,
     scalacOptions := stdOptions ++ versionSpecificOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", targetJavaVersion, "-target", targetJavaVersion)
