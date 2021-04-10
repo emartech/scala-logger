@@ -10,8 +10,7 @@ import com.emarsys.logger.testutil.Arbitraries._
 
 import scala.annotation.nowarn
 
-class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with TypeCheckedTripleEquals {
-  import LoggableEncoder.ops._
+class LoggableEncoderSpec extends AnyFreeSpec with Checkers with Matchers with TypeCheckedTripleEquals with LoggableEncoder.ToLoggableEncoderOps  {
 
   "LoggableEncoder should" - {
     "be able to encode" - {
