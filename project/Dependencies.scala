@@ -12,9 +12,8 @@ object Dependencies {
 
   val stdTestDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scalatest"     %% "scalatest"       % "3.2.7",
-      "org.scalatestplus" %% "scalacheck-1-15" % "3.2.7.0",
-      "org.scalacheck"    %% "scalacheck"      % "1.15.3"
+      "org.scalameta"     %% "munit"            % "0.7.23",
+      "org.scalameta"     %% "munit-scalacheck" % "0.7.23"
     ).map(_ % Test)
   )
 
@@ -57,13 +56,15 @@ object Dependencies {
 
   val catsEffect2Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "2.4.1"
+      "org.typelevel" %% "cats-effect"         % "2.4.1",
+      "org.typelevel" %% "munit-cats-effect-2" % "1.0.1" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
   val catsEffect3Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % "3.0.1"
+      "org.typelevel" %% "cats-effect"         % "3.0.1",
+      "org.typelevel" %% "munit-cats-effect-3" % "1.0.1" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 

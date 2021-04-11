@@ -5,31 +5,27 @@ import cats.effect.std.CountDownLatch
 import cats.effect.{IO, Ref}
 import com.emarsys.logger.levels.LogLevel
 import com.emarsys.logger.{log, Context, Logging, LoggingContext}
-import org.scalatest.compatible.Assertion
-import org.scalatest.wordspec.AnyWordSpecLike
+import munit.CatsEffectSuite
 
-class CatsEffectFiberLocalContextSpec extends AnyWordSpecLike {
-  import cats.effect.unsafe.implicits.global
+class CatsEffectFiberLocalContextSpec extends CatsEffectSuite {
   import com.emarsys.logger.syntax.toContextExtensionOps
 
   val initialLoggingContext: LoggingContext = LoggingContext("hello")
 
   case class Call(level: LogLevel, message: String, loggingContext: LoggingContext)
 
-  def testLogScope[A](f: Logging[IO] => Context[IO] => IO[A]): Chain[Call] = {
-    val io = for {
+  def testLogScope[A](f: Logging[IO] => Context[IO] => IO[A]): IO[Chain[Call]] =
+    for {
       ref <- Ref.of[IO, Chain[Call]](Chain.empty)
       logging = Logging.create((level, msg, ctx) => ref.update(_ :+ Call(level, msg, ctx)))
       context <- CatsEffectLogging.createIOLocalContext(initialLoggingContext)
       _       <- f(logging)(context)
       result  <- ref.get
     } yield result
-    io.unsafeRunSync()
-  }
 
   implicit final class ChainAssertOps(calls: Chain[Call]) {
 
-    def assertContextAt(message: String, expectedContext: LoggingContext): Assertion = {
+    def assertContextAt(message: String, expectedContext: LoggingContext): Unit = {
       val call = calls.find(_.message == message)
       call match {
         case Some(value) => assert(value.loggingContext == expectedContext)
@@ -38,43 +34,46 @@ class CatsEffectFiberLocalContextSpec extends AnyWordSpecLike {
     }
   }
 
-  "CatsEffectLoggingSpec#context" should {
-    "propagate LoggingContext to Logging" in {
-      val calls = testLogScope { implicit logging => implicit context =>
+  test("CatsEffectLoggingSpec#context should propagate LoggingContext to Logging") {
+
+    for {
+      calls <- testLogScope { implicit logging => implicit context =>
         log.info("log1")
       }
+    } yield calls.assertContextAt("log1", initialLoggingContext)
+  }
 
-      calls.assertContextAt("log1", initialLoggingContext)
-    }
-
-    "add to context" in {
-      val calls = testLogScope { implicit logging => implicit context =>
+  test("CatsEffectLoggingSpec#context should add to context") {
+    for {
+      calls <- testLogScope { implicit logging => implicit context =>
         log.info("log1").withExtendedContext("a" -> 1)
       }
+    } yield calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
+  }
 
-      calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
-    }
-
-    "clean context after scope" in {
-      val calls = testLogScope { implicit logging => implicit context =>
+  test("CatsEffectLoggingSpec#context should clean context after scope") {
+    for {
+      calls <- testLogScope { implicit logging => implicit context =>
         log.info("log1").withExtendedContext("a" -> 1) *>
           log.info("log2")
       }
-
+    } yield {
       calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
       calls.assertContextAt("log2", initialLoggingContext)
     }
+  }
 
-    "propagate context to child fibers" in {
-      val calls = testLogScope { implicit logging => implicit context =>
+  test("CatsEffectLoggingSpec#context should propagate context to child fibers") {
+    for {
+      calls <- testLogScope { implicit logging => implicit context =>
         log.info("log1").start.withExtendedContext("a" -> 1).flatMap(_.join)
       }
+    } yield calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
+  }
 
-      calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
-    }
-
-    "should ensure fibers do not affect their parent's context" in {
-      val calls = testLogScope { implicit logging => implicit context =>
+  test("CatsEffectLoggingSpec#context should should ensure fibers do not affect their parent's context") {
+    for {
+      calls <- testLogScope { implicit logging => implicit context =>
         for {
           latch1 <- CountDownLatch[IO](1)
           latch2 <- CountDownLatch[IO](1)
@@ -85,10 +84,7 @@ class CatsEffectFiberLocalContextSpec extends AnyWordSpecLike {
           _      <- fiber.join
         } yield ()
       }
-
-      calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
-    }
-
+    } yield calls.assertContextAt("log1", initialLoggingContext.addParameter("a" -> 1))
   }
 
 }

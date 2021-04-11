@@ -1,48 +1,46 @@
 package com.emarsys.logger
 
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableObject, LoggableString}
-import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
-class LoggingContextSpec extends AnyWordSpec with Matchers with TypeCheckedTripleEquals {
+class LoggingContextSpec extends FunSuite {
 
-  "LoggingContext" should {
-    "add log parameters via addParameter" in {
-      val ctx = LoggingContext("trid")
+  test("LoggingContext should add log parameters via addParameter") {
+    val ctx = LoggingContext("trid")
 
-      val extended = ctx.addParameter("id" -> 1)
+    val extended = ctx.addParameter("id" -> 1)
 
-      extended should ===(LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L))))
-    }
+    assertEquals(extended, LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L))))
+  }
 
-    "add log parameters via + operator" in {
-      val ctx = LoggingContext("trid")
+  test("LoggingContext should add log parameters via + operator") {
+    val ctx = LoggingContext("trid")
 
-      val extended = ctx <> "id" -> 1
+    val extended = ctx <> "id" -> 1
 
-      extended should ===(LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L))))
-    }
+    assertEquals(extended, LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L))))
+  }
 
-    "allow chaining + operators" in {
-      val ctx = LoggingContext("trid")
+  test("LoggingContext should allow chaining + operators") {
+    val ctx = LoggingContext("trid")
 
-      val extended = ctx <> "id" -> 1 <> "name" -> "xy"
+    val extended = ctx <> "id" -> 1 <> "name" -> "xy"
 
-      extended should ===(
-        LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))
-      )
-    }
+    assertEquals(
+      extended,
+      LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))
+    )
+  }
 
-    "allow chaining addParameter calls" in {
-      val ctx = LoggingContext("trid")
+  test("LoggingContext should allow chaining addParameter calls") {
+    val ctx = LoggingContext("trid")
 
-      val extended = ctx.addParameter("id" -> 1).addParameter("name" -> "xy")
+    val extended = ctx.addParameter("id" -> 1).addParameter("name" -> "xy")
 
-      extended should ===(
-        LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))
-      )
-    }
+    assertEquals(
+      extended,
+      LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1L), "name" -> LoggableString("xy")))
+    )
   }
 
 }

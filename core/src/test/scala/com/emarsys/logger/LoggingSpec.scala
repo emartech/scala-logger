@@ -1,14 +1,12 @@
 package com.emarsys.logger
 
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
-class LoggingSpec extends AnyWordSpec with Matchers {
+class LoggingSpec extends FunSuite {
 
-  "Logging" should {
-
-    "compile with Id" in {
-      """
+  test("Logging should compile with Id") {
+    assertEquals(
+      compileErrors("""
         import cats.Id
         import com.emarsys.logger.syntax._
         import com.emarsys.logger.unsafe.implicits._
@@ -16,11 +14,14 @@ class LoggingSpec extends AnyWordSpec with Matchers {
         implicit val lc: LoggingContext = LoggingContext("")
 
         log[Id].warn("oh noe")
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    "compile with Future" in {
-      """
+  test("Logging should compile with Future") {
+    assertEquals(
+      compileErrors("""
         import scala.concurrent.Future
         import scala.concurrent.ExecutionContext.Implicits.global
         import com.emarsys.logger.syntax._
@@ -29,13 +30,16 @@ class LoggingSpec extends AnyWordSpec with Matchers {
         implicit val lc: LoggingContext = LoggingContext("")
 
         log[Future].warn("oh noe")
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    // the cats.catsInstancesForId import is only necessary for scala 3
-    // FIXME: is this a scala 3 bug?
-    "compile with Logged[Id]" in {
-      """
+  // the cats.catsInstancesForId import is only necessary for scala 3
+  // FIXME: is this a scala 3 bug?
+  test("Logging should compile with Logged[Id]") {
+    assertEquals(
+      compileErrors("""
         import cats.Id
         import com.emarsys.logger.syntax._
         import com.emarsys.logger.unsafe.implicits._
@@ -44,11 +48,14 @@ class LoggingSpec extends AnyWordSpec with Matchers {
         type LoggedId[A] = Logged[Id, A]
 
         log[LoggedId].warn("oh noe")
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    "compile with Logged[Future]" in {
-      """
+  test("Logging should compile with Logged[Future]") {
+    assertEquals(
+      compileErrors("""
         import scala.concurrent.Future
         import scala.concurrent.ExecutionContext.Implicits.global
         import com.emarsys.logger.syntax._
@@ -57,8 +64,9 @@ class LoggingSpec extends AnyWordSpec with Matchers {
         type LoggedFuture[A] = Logged[Future, A]
 
         log[LoggedFuture].warn("oh noe")
-      """ should compile
-    }
+      """),
+      ""
+    )
   }
 
 }

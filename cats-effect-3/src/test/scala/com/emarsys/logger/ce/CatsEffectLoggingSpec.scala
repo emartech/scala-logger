@@ -1,73 +1,64 @@
 package com.emarsys.logger.ce
 
+import cats.Monad
 import cats.effect.IO
 import ch.qos.logback.classic.Level
 import com.emarsys.logger.{Logging, LoggingBehavior}
-import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.CatsEffectSuite
 
-class CatsEffectLoggingSpec extends AnyFlatSpec with Matchers with TypeCheckedTripleEquals with LoggingBehavior[IO] {
-  import cats.effect.unsafe.implicits.global
-
-  override def runF(f: IO[Unit]): Unit = f.unsafeRunSync()
+class CatsEffectLoggingSpec extends CatsEffectSuite with LoggingBehavior[IO] {
+  implicit override val monadF: Monad[IO] = IO.asyncForIO
 
   override def createLogger(name: String): Logging[IO] =
     CatsEffectLogging.createEffectLoggerG[IO, IO](name).unsafeRunSync()
 
-  "CatsEffectLogging.debug" should behave like simpleLog(
-    Level.DEBUG,
-    { case (logger, msg, ctx) => logger.debug(msg)(ctx) }
-  )
+  simpleLog("CatsEffectLogging.debug", Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg)(ctx) })
 
-  "CatsEffectLogging.info" should behave like simpleLog(
-    Level.INFO,
-    { case (logger, msg, ctx) => logger.info(msg)(ctx) }
-  )
+  simpleLog("CatsEffectLogging.info", Level.INFO, { case (logger, msg, ctx) => logger.info(msg)(ctx) })
 
-  "CatsEffectLogging.warn" should behave like simpleLog(
-    Level.WARN,
-    { case (logger, msg, ctx) => logger.warn(msg)(ctx) }
-  )
+  simpleLog("CatsEffectLogging.warn", Level.WARN, { case (logger, msg, ctx) => logger.warn(msg)(ctx) })
 
-  it should behave like errorLog(
+  errorLog(
+    "CatsEffectLogging.warn",
     { case (logger, error, ctx) => logger.warn(error)(ctx) },
     { case (logger, error, message, ctx) => logger.warn(error, message)(ctx) }
   )
 
-  "CatsEffectLogging.error" should behave like simpleLog(
-    Level.ERROR,
-    { case (logger, msg, ctx) => logger.error(msg)(ctx) }
-  )
+  simpleLog("CatsEffectLogging.error", Level.ERROR, { case (logger, msg, ctx) => logger.error(msg)(ctx) })
 
-  it should behave like errorLog(
+  errorLog(
+    "CatsEffectLogging.error",
     { case (logger, error, ctx) => logger.error(error)(ctx) },
     { case (logger, error, message, ctx) => logger.error(error, message)(ctx) }
   )
 
-  "CatsEffectLogging" should "compile with IO" in {
-    """
+  test("CatsEffectLogging should compile with IO") {
+    assertEquals(
+      compileErrors("""
       import cats.effect.IO
-      import cats.effect.unsafe.implicits.global
       import com.emarsys.logger._
 
       implicit val logger: Logging[IO] = CatsEffectLogging.createEffectLogger[IO]("default").unsafeRunSync()
       implicit val lc: LoggingContext = LoggingContext("")
 
       log.warn("oh noe")
-      """ should compile
+      """),
+      ""
+    )
   }
 
-  it should "compile with Logged[IO]" in {
-    """
+  test("CatsEffectLogging should compile with Logged[IO]") {
+    assertEquals(
+      compileErrors("""
       import cats.effect.IO
-      import cats.effect.unsafe.implicits.global
       import com.emarsys.logger._
       import com.emarsys.logger.ce._
 
       implicit val logger: Logging[LoggedIO] = CatsEffectLogging.createEffectLoggerG[LoggedIO, IO]("default").unsafeRunSync()
 
       log.warn("oh noe")
-      """ should compile
+      """),
+      ""
+    )
   }
 }

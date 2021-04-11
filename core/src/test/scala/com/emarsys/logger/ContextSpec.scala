@@ -1,25 +1,26 @@
 package com.emarsys.logger
 
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
-class ContextSpec extends AnyWordSpec with Matchers {
+class ContextSpec extends FunSuite {
 
-  "Context" should {
-
-    "compile with ReaderT" in {
-      """
+  test("Context should compile with ReaderT") {
+    assertEquals(
+      compileErrors("""
         import cats._
         import cats.data._
 
         type App[A] = ReaderT[Id, LoggingContext, A]
 
         implicitly[Context[App]]
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    "compile with a stack of monad transformers containing ReaderT" in {
-      """
+  test("Context should compile with a stack of monad transformers containing ReaderT") {
+    assertEquals(
+      compileErrors("""
         import cats._
         import cats.data._
 
@@ -27,8 +28,9 @@ class ContextSpec extends AnyWordSpec with Matchers {
         type App[A] = EitherT[Reader, Throwable, A]
 
         implicitly[Context[App]]
-      """ should compile
-    }
+      """),
+      ""
+    )
   }
 
 }

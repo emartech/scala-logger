@@ -1,68 +1,96 @@
 package com.emarsys.logger
 
-import java.util.UUID
-
+import cats.Monad
 import ch.qos.logback.classic.{Level, Logger}
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender
+import munit.FunSuite
 import net.logstash.logback.marker.Markers
-import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 import org.slf4j.{LoggerFactory, Marker}
 
+import java.util.UUID
 import scala.jdk.CollectionConverters._
 
-trait LoggingBehavior[F[_]] { this: AnyFlatSpec with Matchers with TypeCheckedTripleEquals =>
+trait LoggingBehavior[F[_]] { this: FunSuite =>
+  import cats.syntax.functor._
+
   type SimpleLogFn       = (Logging[F], String, LoggingContext) => F[Unit]
   type ErrorLogFn        = (Logging[F], Throwable, LoggingContext) => F[Unit]
   type ErrorLogWithMsgFn = (Logging[F], Throwable, String, LoggingContext) => F[Unit]
 
-  def runF(f: F[Unit]): Unit
+  implicit val monadF: Monad[F]
+
   def createLogger(name: String): Logging[F]
 
-  def simpleLog(level: Level, logFn: SimpleLogFn): Unit = {
+  case class LoggingFixture(logger: Logging[F], appender: TestAppender)
 
-    it should "log with the correct level" in new LoggingScope {
-      val ctx = LoggingContext("trid")
-      runF(logFn(logger, "message", ctx))
+  private val loggingFixture = FunFixture[LoggingFixture](
+    setup = { _ =>
+      val loggerName         = UUID.randomUUID().toString.take(8)
+      val logger: Logging[F] = createLogger(loggerName)
 
-      appender.events.head.getLevel should ===(level)
+      val appender = new TestAppender
+      appender.start()
+
+      val underlyingLogger = LoggerFactory.getLogger(loggerName).asInstanceOf[Logger]
+      underlyingLogger.detachAndStopAllAppenders()
+      underlyingLogger.addAppender(appender)
+
+      LoggingFixture(logger, appender)
+    },
+    teardown = { _ => }
+  )
+
+  private def flattenMarkers(marker: Marker): List[Marker] =
+    if (!marker.iterator().hasNext) {
+      List(marker)
+    } else {
+      marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
     }
 
-    it should "log the correct message" in new LoggingScope {
+  def simpleLog(name: String, level: Level, logFn: SimpleLogFn) = {
+    loggingFixture.test(s"$name should log with the correct level") { f =>
       val ctx = LoggingContext("trid")
-      runF(logFn(logger, "message", ctx))
 
-      appender.events.head.getMessage should ===("message")
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+      } yield assertEquals(f.appender.events.head.getLevel, level)
     }
 
-    it should "log the transaction id" in new LoggingScope {
+    loggingFixture.test(s"$name should log the correct message") { f =>
       val ctx = LoggingContext("trid")
-      runF(logFn(logger, "message", ctx))
-
-      appender.events.head.getMarker should ===(Markers.append("transactionId", "trid"))
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+      } yield assertEquals(f.appender.events.head.getMessage, "message")
     }
 
-    it should "log the extended context" in new LoggingScope {
+    loggingFixture.test(s"$name should log the transaction id") { f =>
+      val ctx = LoggingContext("trid")
+
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+      } yield assertEquals(f.appender.events.head.getMarker, Markers.append("transactionId", "trid"))
+    }
+
+    loggingFixture.test(s"$name should log the extended context") { f =>
       val ctx = LoggingContext("trid", LoggableObject("id" -> LoggableIntegral(1)))
-      runF(logFn(logger, "message", ctx))
 
-      private val marker = flattenMarkers(appender.events.head.getMarker)
-
-      marker(1) should ===(Markers.appendEntries(Map("id" -> 1L).asJava))
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+        marker = flattenMarkers(f.appender.events.head.getMarker)
+      } yield assertEquals(marker(1), Markers.appendEntries(Map("id" -> 1L).asJava))
     }
 
-    it should "log nested objects in ctx" in new LoggingScope {
+    loggingFixture.test(s"$name should log nested objects in ctx") { f =>
       val ctx = LoggingContext("trid", LoggableObject("obj" -> LoggableObject("id" -> LoggableIntegral(1))))
-      runF(logFn(logger, "message", ctx))
 
-      private val marker = flattenMarkers(appender.events.head.getMarker)
-
-      marker(1).toString should ===("{obj={id=1}}")
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+        marker = flattenMarkers(f.appender.events.head.getMarker)
+      } yield assertEquals(marker(1).toString, "{obj={id=1}}")
     }
 
-    it should "log list of objects in ctx" in new LoggingScope {
+    loggingFixture.test(s"$name should log list of objects in ctx") { f =>
       val ctx = LoggingContext(
         "trid",
         LoggableObject(
@@ -74,80 +102,64 @@ trait LoggingBehavior[F[_]] { this: AnyFlatSpec with Matchers with TypeCheckedTr
           )
         )
       )
-      runF(logFn(logger, "message", ctx))
 
-      private val marker = flattenMarkers(appender.events.head.getMarker)
-
-      marker(1).toString should ===("{list=[{id=1}, {id=2}]}")
+      for {
+        _ <- logFn(f.logger, "message", ctx)
+        marker = flattenMarkers(f.appender.events.head.getMarker)
+      } yield assertEquals(marker(1).toString, "{list=[{id=1}, {id=2}]}")
     }
   }
 
-  def errorLog(log: ErrorLogFn, logWithMsgFn: ErrorLogWithMsgFn): Unit = {
-    it should "log the error in the context" in new LoggingScope {
+  def errorLog(name: String, log: ErrorLogFn, logWithMsgFn: ErrorLogWithMsgFn) = {
+    loggingFixture.test(s"$name should log the error in the context") { f =>
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      runF(log(logger, error, ctx))
 
-      private val marker = flattenMarkers(appender.events.head.getMarker)
-
-      val errorMarker = Markers.appendEntries(
-        Map(
-          "exception" -> Map(
-            "class"      -> error.getClass.getCanonicalName,
-            "message"    -> error.getMessage,
-            "stacktrace" -> error.getStackTrace.mkString("\n")
+      for {
+        _ <- log(f.logger, error, ctx)
+        marker = flattenMarkers(f.appender.events.head.getMarker)
+      } yield {
+        val errorMarker = Markers.appendEntries(
+          Map(
+            "exception" -> Map(
+              "class"      -> error.getClass.getCanonicalName,
+              "message"    -> error.getMessage,
+              "stacktrace" -> error.getStackTrace.mkString("\n")
+            ).asJava
           ).asJava
-        ).asJava
-      )
-      marker(1).toString should ===(errorMarker.toString)
+        )
+        assertEquals(marker(1).toString, errorMarker.toString)
+      }
     }
 
-    it should "log the error in the context even when logging a message" in new LoggingScope {
+    loggingFixture.test(s"$name should log the error in the context even when logging a message") { f =>
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      runF(logWithMsgFn(logger, error, "message", ctx))
 
-      private val marker = flattenMarkers(appender.events.head.getMarker)
-
-      val errorMarker = Markers.appendEntries(
-        Map(
-          "exception" -> Map(
-            "class"      -> error.getClass.getCanonicalName,
-            "message"    -> error.getMessage,
-            "stacktrace" -> error.getStackTrace.mkString("\n")
+      for {
+        _ <- logWithMsgFn(f.logger, error, "message", ctx)
+        marker = flattenMarkers(f.appender.events.head.getMarker)
+      } yield {
+        val errorMarker = Markers.appendEntries(
+          Map(
+            "exception" -> Map(
+              "class"      -> error.getClass.getCanonicalName,
+              "message"    -> error.getMessage,
+              "stacktrace" -> error.getStackTrace.mkString("\n")
+            ).asJava
           ).asJava
-        ).asJava
-      )
-      marker(1).toString should ===(errorMarker.toString)
+        )
+        assertEquals(marker(1).toString, errorMarker.toString)
+      }
     }
 
-    it should "log the correct message even when logging error" in new LoggingScope {
+    loggingFixture.test(s"$name should log the correct message even when logging error") { f =>
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")
-      runF(logWithMsgFn(logger, error, "message", ctx))
 
-      appender.events.head.getMessage should ===("message")
+      for {
+        _ <- logWithMsgFn(f.logger, error, "message", ctx)
+      } yield assertEquals(f.appender.events.head.getMessage, "message")
     }
   }
-
-  private def flattenMarkers(marker: Marker): List[Marker] =
-    if (!marker.iterator().hasNext) {
-      List(marker)
-    } else {
-      marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
-    }
-
-  trait LoggingScope {
-
-    val loggerName         = UUID.randomUUID().toString.take(8)
-    val logger: Logging[F] = createLogger(loggerName)
-
-    val appender = new TestAppender
-    appender.start()
-
-    private val underlyingLogger = LoggerFactory.getLogger(loggerName).asInstanceOf[Logger]
-    underlyingLogger.detachAndStopAllAppenders()
-    underlyingLogger.addAppender(appender)
-  }
-
 }

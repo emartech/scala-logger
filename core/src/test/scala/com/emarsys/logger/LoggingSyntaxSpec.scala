@@ -1,13 +1,13 @@
 package com.emarsys.logger
 
-import cats.Applicative
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
-class LoggingSyntaxSpec extends AnyWordSpec with Matchers {
-  "LoggingSyntax" should {
-    "compile extendContext" in {
-      """
+class LoggingSyntaxSpec extends FunSuite {
+
+  test("LoggingSyntax should compile extendContext") {
+    assertEquals(
+      compileErrors("""
+        import cats._
         import com.emarsys.logger.syntax._
 
         def f[F[_]: Applicative: Logging: Context]() = {
@@ -15,28 +15,37 @@ class LoggingSyntaxSpec extends AnyWordSpec with Matchers {
             Applicative[F].unit
           }
         }
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    "compile withExtendedContext" in {
-      """
+  test("LoggingSyntax should compile withExtendedContext") {
+    assertEquals(
+      compileErrors("""
+        import cats._
         import com.emarsys.logger.syntax._
 
         def f[F[_]: Applicative: Logging: Context]() = {
           Applicative[F].unit.withExtendedContext("id" -> 1)
         }
-      """ should compile
-    }
+      """),
+      ""
+    )
+  }
 
-    "compile addParameters" in {
-      """
+  test("LoggingSyntax should compile addParameters") {
+    assertEquals(
+      compileErrors("""
+        import cats._
         import com.emarsys.logger.syntax._
 
         val lc = LoggingContext("trid")
 
         lc.addParameters("id" -> 1)
-      """ should compile
+      """),
+      ""
+    )
 
-    }
   }
 }
