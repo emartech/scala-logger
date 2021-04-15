@@ -12,24 +12,24 @@ class CatsEffectLoggingSpec extends CatsEffectSuite with LoggingBehavior[IO] {
   override def createLogger(name: String): Logging[IO] =
     CatsEffectLogging.createEffectLoggerG[IO, IO](name).unsafeRunSync()
 
-  simpleLog("CatsEffectLogging.debug", Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg)(ctx) })
+  simpleLog("CatsEffectLogging.debug", Level.DEBUG, { case (logger, msg, ctx) => logger.debug(msg, ctx) })
 
-  simpleLog("CatsEffectLogging.info", Level.INFO, { case (logger, msg, ctx) => logger.info(msg)(ctx) })
+  simpleLog("CatsEffectLogging.info", Level.INFO, { case (logger, msg, ctx) => logger.info(msg, ctx) })
 
-  simpleLog("CatsEffectLogging.warn", Level.WARN, { case (logger, msg, ctx) => logger.warn(msg)(ctx) })
+  simpleLog("CatsEffectLogging.warn", Level.WARN, { case (logger, msg, ctx) => logger.warn(msg, ctx) })
 
   errorLog(
     "CatsEffectLogging.warn",
-    { case (logger, error, ctx) => logger.warn(error)(ctx) },
-    { case (logger, error, message, ctx) => logger.warn(error, message)(ctx) }
+    { case (logger, error, ctx) => logger.warn(error, ctx) },
+    { case (logger, error, message, ctx) => logger.warn(error, message, ctx) }
   )
 
-  simpleLog("CatsEffectLogging.error", Level.ERROR, { case (logger, msg, ctx) => logger.error(msg)(ctx) })
+  simpleLog("CatsEffectLogging.error", Level.ERROR, { case (logger, msg, ctx) => logger.error(msg, ctx) })
 
   errorLog(
     "CatsEffectLogging.error",
-    { case (logger, error, ctx) => logger.error(error)(ctx) },
-    { case (logger, error, message, ctx) => logger.error(error, message)(ctx) }
+    { case (logger, error, ctx) => logger.error(error, ctx) },
+    { case (logger, error, message, ctx) => logger.error(error, message, ctx) }
   )
 
   test("CatsEffectLogging should compile with IO") {

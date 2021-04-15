@@ -9,26 +9,52 @@ import com.emarsys.logger.unsafe.UnsafeLogstashLogging
 trait Logging[F[_]] {
 
   def debug(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(log(LogLevel.DEBUG, msg, _))
+    magnet(debug(msg, _))
+
+  def debug(msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.DEBUG, msg, ctx)
 
   def info(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(log(LogLevel.INFO, msg, _))
+    magnet(info(msg, _))
+
+  def info(msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.INFO, msg, ctx)
 
   def warn(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(log(LogLevel.WARN, msg, _))
+    magnet(warn(msg, _))
 
-  def warn(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = warn(cause, "Warn")
+  def warn(msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.WARN, msg, ctx)
 
-  def error(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(ctx => log(LogLevel.ERROR, msg, errorContext(cause, ctx)))
+  def warn(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
+    magnet(warn(cause, "Warn", _))
+
+  def warn(cause: Throwable, ctx: LoggingContext): F[Unit] =
+    warn(cause, "Warn", ctx)
 
   def warn(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(ctx => log(LogLevel.WARN, msg, errorContext(cause, ctx)))
+    magnet(ctx => warn(cause, msg, ctx))
+
+  def warn(cause: Throwable, msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.WARN, msg, errorContext(cause, ctx))
 
   def error(msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
-    magnet(log(LogLevel.ERROR, msg, _))
+    magnet(error(msg, _))
 
-  def error(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] = error(cause, "Error")
+  def error(msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.ERROR, msg, ctx)
+
+  def error(cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
+    magnet(error(cause, "Error", _))
+
+  def error(cause: Throwable, ctx: LoggingContext): F[Unit] =
+    error(cause, "Error", ctx)
+
+  def error(cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
+    magnet(ctx => error(cause, msg, errorContext(cause, ctx)))
+
+  def error(cause: Throwable, msg: => String, ctx: LoggingContext): F[Unit] =
+    log(LogLevel.ERROR, msg, errorContext(cause, ctx))
 
   def log(level: LogLevel, msg: String, ctx: LoggingContext): F[Unit]
 

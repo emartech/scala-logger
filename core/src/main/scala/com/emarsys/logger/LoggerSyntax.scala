@@ -86,7 +86,7 @@ final class LoggingOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
   ): F[A] =
     fa.handleErrorWith { error =>
       magnet { ctx =>
-        logging.error(error, createMsg(error))(ctxExtender(error, ctx))
+        logging.error(error, createMsg(error), ctxExtender(error, ctx))
       } *> error.raiseError
     }
 
@@ -97,7 +97,7 @@ final class LoggingOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
   ): F[A] =
     fa.handleErrorWith { error =>
       magnet { ctx =>
-        logging.error(error, msg)(ctxExtender(error, ctx))
+        logging.error(error, msg, ctxExtender(error, ctx))
       } *> error.raiseError
     }
 
@@ -119,7 +119,7 @@ final class LoggingOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
       magnet: LoggingContextMagnet[F]
   ): F[A] = fa.flatTap { value =>
     magnet { ctx =>
-      logging.info(createMsg(value))(ctxExtender(value, ctx))
+      logging.info(createMsg(value), ctxExtender(value, ctx))
     }
   }
 
@@ -130,7 +130,7 @@ final class LoggingOps[F[_], A] private[logger] (val fa: F[A]) extends AnyVal {
   ): F[A] =
     fa.flatTap { value =>
       magnet { ctx =>
-        logging.info(msg)(ctxExtender(value, ctx))
+        logging.info(msg, ctxExtender(value, ctx))
       }
     }
 

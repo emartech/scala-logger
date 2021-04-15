@@ -4,6 +4,8 @@ import cats.Id
 import com.emarsys.logger.{Logged, LoggingContext}
 import munit.FunSuite
 
+import scala.annotation.nowarn
+
 class LoggingContextMagnetSpec extends FunSuite {
 
   def getMagnet[F[_]](implicit m: LoggingContextMagnet[F]) = m
@@ -35,7 +37,7 @@ class LoggingContextMagnetSpec extends FunSuite {
 
   test("LoggingContextMagnet should return the context when constructed from a logging context") {
     val lc     = LoggingContext("")
-    val magnet = getMagnet[Id](lc)
+    val magnet = getMagnet[Id](lc): @nowarn
 
     var resultContext: LoggingContext = null
     magnet(ctx => resultContext = ctx)

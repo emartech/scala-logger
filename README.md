@@ -73,8 +73,8 @@ implicit val logging: Logging[F] = ???
 
 val context = LoggingContext("main")
 
-log.info("Hello there.")(context)
-log.error("Oh snap!", new RuntimeException())(context)
+log.info("Hello there.", context)
+log.error(new RuntimeException(), "Oh snap!", context)
 ```
 
 ### Context propagation
@@ -95,7 +95,7 @@ def handleRequest[F[_]: Monad: Logging](request: Request)(implicit context: Logg
 
 def doStuffInDb[F[_]: Monad: Logging](user: User)(implicit context: LoggingContext): F[Unit] =
   accessDb *>
-    log.info("User accessed database")(context.addParameters("user" -> user.name))
+    log.info("User accessed database", context.addParameters("user" -> user.name))
 
 def main() = {
   CatsEffectLogging.createEffectLogger[IO]("application").flatMap { implicit logging
@@ -123,15 +123,15 @@ Accessing the request log is done through the `Context[F]` typeclass, which is a
 `Local[F, LoggingContext]`.
 
 ```scala
-def handleRequest[F[_]: Monad: Logging](request: Request): F[Response] = {
+def handleRequest[F[_]: Monad: Logging: Context](request: Request): F[Response] = {
   log.debug("Received request") *>
     doStuffInDb(request.user) *>
     respondWith200
 }
 
-def doStuffInDb[F[_]: Monad: Logging](user: User): F[Unit] = for {
+def doStuffInDb[F[_]: Monad: Logging: Context](user: User): F[Unit] = for {
   context <- log.getContext
-  _ <- accessDb *> log.info("User accessed database")(context.addParameters("user" -> user.name))
+  _ <- accessDb *> log.info("User accessed database", context.addParameters("user" -> user.name))
 } yield ()
 
 def main() = {
@@ -140,7 +140,7 @@ def main() = {
     val context = LoggingContext(request.id)
 
     handleRequest[LoggedIO](request).run(context)    
-  }  
+  }
 }
 ```
 
@@ -150,15 +150,15 @@ Cats Effect 3 supports fiber local data through the new `IOLocal` class. This cl
 data belonging to a single fiber.
 
 ```scala
-def handleRequest[F[_]: Monad: Logging](request: Request): F[Response] = {
+def handleRequest[F[_]: Monad: Logging: Context](request: Request): F[Response] = {
   log.debug("Received request") *>
     doStuffInDb(request.user) *>
     respondWith200
 }
 
-def doStuffInDb[F[_]: Monad: Logging](user: User): F[Unit] = for {
+def doStuffInDb[F[_]: Monad: Logging: Context](user: User): F[Unit] = for {
   context <- log.getContext
-  _ <- accessDb *> log.info("User accessed database")(context.addParameters("user" -> user.name))
+  _ <- accessDb *> log.info("User accessed database", context.addParameters("user" -> user.name))
 } yield ()
 
 def main() = {

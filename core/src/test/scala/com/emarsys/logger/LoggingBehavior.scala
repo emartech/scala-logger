@@ -4,7 +4,7 @@ import cats.Monad
 import ch.qos.logback.classic.{Level, Logger}
 import com.emarsys.logger.loggable.{LoggableIntegral, LoggableList, LoggableObject}
 import com.emarsys.logger.testutil.TestAppender
-import munit.FunSuite
+import munit.{FunSuite, Location}
 import net.logstash.logback.marker.Markers
 import org.slf4j.{LoggerFactory, Marker}
 
@@ -48,7 +48,7 @@ trait LoggingBehavior[F[_]] { this: FunSuite =>
       marker :: marker.iterator().asScala.flatMap(flattenMarkers).toList
     }
 
-  def simpleLog(name: String, level: Level, logFn: SimpleLogFn) = {
+  def simpleLog(name: String, level: Level, logFn: SimpleLogFn)(implicit loc: Location): Unit = {
     loggingFixture.test(s"$name should log with the correct level") { f =>
       val ctx = LoggingContext("trid")
 
@@ -110,7 +110,7 @@ trait LoggingBehavior[F[_]] { this: FunSuite =>
     }
   }
 
-  def errorLog(name: String, log: ErrorLogFn, logWithMsgFn: ErrorLogWithMsgFn) = {
+  def errorLog(name: String, log: ErrorLogFn, logWithMsgFn: ErrorLogWithMsgFn)(implicit loc: Location): Unit = {
     loggingFixture.test(s"$name should log the error in the context") { f =>
       val ctx   = LoggingContext("trid")
       val error = new Exception("error message")

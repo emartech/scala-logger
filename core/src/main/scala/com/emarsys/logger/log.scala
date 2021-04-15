@@ -10,26 +10,50 @@ object log {
   def debug[F[_]: Logging](msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].debug(msg)
 
+  def debug[F[_]: Logging](msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].debug(msg, ctx)
+
   def info[F[_]: Logging](msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].info(msg)
+
+  def info[F[_]: Logging](msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].info(msg, ctx)
 
   def warn[F[_]: Logging](msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].warn(msg)
 
+  def warn[F[_]: Logging](msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].warn(msg, ctx)
+
   def warn[F[_]: Logging](cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].warn(cause)
+
+  def warn[F[_]: Logging](cause: Throwable, ctx: LoggingContext): F[Unit] =
+    Logging[F].warn(cause, ctx)
 
   def warn[F[_]: Logging](cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].warn(cause, msg)
 
+  def warn[F[_]: Logging](cause: Throwable, msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].warn(cause, msg, ctx)
+
   def error[F[_]: Logging](msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].error(msg)
+
+  def error[F[_]: Logging](msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].error(msg, ctx)
 
   def error[F[_]: Logging](cause: Throwable)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].error(cause)
 
+  def error[F[_]: Logging](cause: Throwable, ctx: LoggingContext): F[Unit] =
+    Logging[F].error(cause, ctx)
+
   def error[F[_]: Logging](cause: Throwable, msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].error(cause, msg)
+
+  def error[F[_]: Logging](cause: Throwable, msg: => String, ctx: LoggingContext): F[Unit] =
+    Logging[F].error(cause, msg, ctx)
 
   def log[F[_]: Logging](level: LogLevel, msg: String, ctx: LoggingContext): F[Unit] =
     Logging[F].log(level, msg, ctx)

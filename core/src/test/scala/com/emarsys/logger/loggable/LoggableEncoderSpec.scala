@@ -1,6 +1,6 @@
 package com.emarsys.logger.loggable
 
-import munit.ScalaCheckSuite
+import munit.{Location, ScalaCheckSuite}
 import org.scalacheck.Prop.forAll
 import org.scalacheck.util.Pretty
 import org.scalacheck.{Arbitrary, Shrink}
@@ -16,7 +16,7 @@ class LoggableEncoderSpec extends ScalaCheckSuite with LoggableEncoder.ToLoggabl
       a1: Arbitrary[A1],
       s1: Shrink[A1],
       pp1: A1 => Pretty,
-      loc: munit.Location
+      loc: Location
   ) = {
     val name = implicitly[ClassTag[A1]].runtimeClass.getSimpleName
     property(s"LoggableEncoder should be able to encode $name") {

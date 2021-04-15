@@ -23,6 +23,7 @@ object LoggingContextMagnet {
       override def apply[Result](f: LoggingContext => F[Unit]): F[Unit] = f(context)
     }
 
+  @deprecated("Use logging.info(\"message\", context) instead of logging.info(\"message\")(context)", since = "0.8.0")
   implicit def fromLoggingContext[F[_]](context: LoggingContext): LoggingContextMagnet[F] =
     new LoggingContextMagnet[F] {
       override def apply[Result](f: LoggingContext => F[Unit]): F[Unit] = f(context)
