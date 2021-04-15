@@ -37,7 +37,7 @@ class LoggingContextMagnetSpec extends FunSuite {
 
   test("LoggingContextMagnet should return the context when constructed from a logging context") {
     val lc     = LoggingContext("")
-    val magnet = getMagnet[Id](lc): @nowarn
+    val magnet = getMagnet[Id](lc)
 
     var resultContext: LoggingContext = null
     magnet(ctx => resultContext = ctx)

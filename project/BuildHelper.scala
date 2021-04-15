@@ -8,7 +8,6 @@ object BuildHelper {
   val targetJavaVersion = "1.8"
 
   private val stdOptions = Seq(
-    "-deprecation",
     "-encoding",
     "UTF-8",
     "-feature",
@@ -17,6 +16,7 @@ object BuildHelper {
   )
 
   private val std2xOptions = Seq(
+    "-deprecation",
     "-language:higherKinds",
     "-language:existentials",
     "-explaintypes",
@@ -46,7 +46,9 @@ object BuildHelper {
           "-Ypartial-unification"
         ) ++ std2xOptions
       case Some((3, 0)) =>
-        Seq("-Ykind-projector")
+        Seq(
+          "-Ykind-projector"
+        )
       case _ => Seq.empty
     }
 
