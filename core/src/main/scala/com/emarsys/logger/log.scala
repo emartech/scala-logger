@@ -7,6 +7,9 @@ import com.emarsys.logger.syntax._
 
 object log {
 
+  @deprecated("Do not use log[F].info, use log.info[F] instead", since = "0.8.0")
+  def apply[F[_]](implicit logging: Logging[F]): Logging[F] = logging
+
   def debug[F[_]: Logging](msg: => String)(implicit magnet: LoggingContextMagnet[F]): F[Unit] =
     Logging[F].debug(msg)
 

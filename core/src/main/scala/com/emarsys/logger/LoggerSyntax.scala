@@ -11,7 +11,7 @@ import scala.language.implicitConversions
 trait LoggerSyntax {
 
   @deprecated("Use com.emarsys.logger.log object instead", since = "0.8.0")
-  def log[F[_]](implicit logging: Logging[F]): Logging[F] = logging
+  val log: logo.type = logo
 
   implicit final def toLoggingOps[F[_], A](fa: F[A]): LoggingOps[F, A] = new LoggingOps(fa)
 
