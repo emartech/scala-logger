@@ -63,7 +63,7 @@ object Dependencies {
 
   val catsEffect3Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect"         % "3.0.1",
+      "org.typelevel" %% "cats-effect"         % "3.0.2",
       "org.typelevel" %% "munit-cats-effect-3" % "1.0.1" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
