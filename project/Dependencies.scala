@@ -32,7 +32,7 @@ object Dependencies {
   val coreDependencies = Seq(
     libraryDependencies ++= Seq(
       "org.typelevel"       %% "cats-core"                % "2.5.0",
-      "org.typelevel"       %% "cats-mtl"                 % "1.1.3",
+      "org.typelevel"       %% "cats-mtl"                 % "1.2.0",
       "ch.qos.logback"       % "logback-classic"          % "1.2.3",
       "net.logstash.logback" % "logstash-logback-encoder" % "6.6"
     ) ++ magnolia(scalaVersion.value)
