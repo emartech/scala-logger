@@ -12,8 +12,8 @@ object Dependencies {
 
   val stdTestDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scalameta"     %% "munit"            % "0.7.23",
-      "org.scalameta"     %% "munit-scalacheck" % "0.7.23"
+      "org.scalameta"     %% "munit"            % "0.7.25",
+      "org.scalameta"     %% "munit-scalacheck" % "0.7.25"
     ).map(_ % Test)
   )
 
@@ -31,8 +31,8 @@ object Dependencies {
 
   val coreDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel"       %% "cats-core"                % "2.5.0",
-      "org.typelevel"       %% "cats-mtl"                 % "1.1.3",
+      "org.typelevel"       %% "cats-core"                % "2.6.0",
+      "org.typelevel"       %% "cats-mtl"                 % "1.2.0",
       "ch.qos.logback"       % "logback-classic"          % "1.2.3",
       "net.logstash.logback" % "logstash-logback-encoder" % "6.6"
     ) ++ magnolia(scalaVersion.value)
@@ -56,15 +56,15 @@ object Dependencies {
 
   val catsEffect2Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect"         % "2.4.1",
-      "org.typelevel" %% "munit-cats-effect-2" % "1.0.1" % "test"
+      "org.typelevel" %% "cats-effect"         % "2.5.0",
+      "org.typelevel" %% "munit-cats-effect-2" % "1.0.2" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
   val catsEffect3Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect"         % "3.0.2",
-      "org.typelevel" %% "munit-cats-effect-3" % "1.0.1" % "test"
+      "org.typelevel" %% "cats-effect"         % "3.1.0",
+      "org.typelevel" %% "munit-cats-effect-3" % "1.0.2" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 

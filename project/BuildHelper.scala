@@ -4,7 +4,8 @@ import sbt.librarymanagement.CrossVersion
 object BuildHelper {
   val scala212          = "2.12.13"
   val scala213          = "2.13.5"
-  val scala30           = "3.0.0-RC2"
+  val scala30RC2        = "3.0.0-RC2"
+  val scala30RC3        = "3.0.0-RC3"
   val targetJavaVersion = "1.8"
 
   private val stdOptions = Seq(
@@ -54,7 +55,7 @@ object BuildHelper {
 
   def stdSettings(prjName: String, withScala3: Boolean) = Seq(
     name := prjName,
-    crossScalaVersions := Seq(scala212, scala213) ++ (if (withScala3) Seq(scala30) else Nil),
+    crossScalaVersions := Seq(scala212, scala213) ++ (if (withScala3) Seq(scala30RC2, scala30RC3) else Nil),
     scalaVersion := scala213,
     scalacOptions := stdOptions ++ versionSpecificOptions(scalaVersion.value),
     javacOptions ++= Seq("-source", targetJavaVersion, "-target", targetJavaVersion)
