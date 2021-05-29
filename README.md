@@ -42,7 +42,7 @@ implicit val ioLogging: F[Logging[Logged[F]]] =
 There were several breaking changes in cats effect 3 which means a separate interop module is necessary:
 
 ```sbt
-libraryDependencies += "com.emarsys" %% "scala-logger-ce2" % "x.y.z"
+libraryDependencies += "com.emarsys" %% "scala-logger-ce3" % "x.y.z"
 ```
 
 To create a `Logging` instance, you can use the exact same methods as in the case of cats effect 2.
