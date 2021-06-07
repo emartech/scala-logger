@@ -13,7 +13,8 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "scala-logger",
-    publish / skip := true
+    publish / skip := true,
+    commands += analyse
   )
   .aggregate(
     core,
@@ -21,6 +22,13 @@ lazy val root = project
     catsEffect3,
     akkaHttpContrib
   )
+
+lazy val analyse = Command.command("analyse") { state =>
+  Project.extract(state).appendWithSession(
+    Seq(crossPaths := false, useCoursier := false),
+    state
+  )
+}
 
 lazy val core =
   project
