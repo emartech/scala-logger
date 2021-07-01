@@ -1,0 +1,6 @@
+FROM openlaw/scala-builder:0.10.0-alpine
+
+WORKDIR /workspace/source/
+COPY . .
+
+ENTRYPOINT [ "sbt", "analyse", "update" ]

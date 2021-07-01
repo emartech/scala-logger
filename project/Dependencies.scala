@@ -22,10 +22,10 @@ object Dependencies {
       case Some((2, 12)) =>
         Seq(
           compilerPlugin("org.scalamacros" % "paradise"       % "2.1.1" cross CrossVersion.full),
-          compilerPlugin("org.typelevel"   % "kind-projector" % "0.11.3" cross CrossVersion.full)
+          compilerPlugin("org.typelevel"   % "kind-projector" % "0.13.0" cross CrossVersion.full)
         )
       case Some((2, 13)) =>
-        Seq(compilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full))
+        Seq(compilerPlugin("org.typelevel" % "kind-projector" % "0.13.0" cross CrossVersion.full))
       case _ => Seq()
     }
 
@@ -56,15 +56,15 @@ object Dependencies {
 
   val catsEffect2Dependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect"         % "3.1.1",
-      "org.typelevel" %% "munit-cats-effect-2" % "1.0.3" % "test"
+      "org.typelevel" %% "cats-effect"         % "2.5.1",
+      "org.typelevel" %% "munit-cats-effect-2" % "1.0.5" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
   val catsEffect3Dependencies = Seq(
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-effect"         % "3.1.1",
-      "org.typelevel" %% "munit-cats-effect-3" % "1.0.3" % "test"
+      "org.typelevel" %% "munit-cats-effect-3" % "1.0.5" % "test"
     )
   ) ++ stdDependencies ++ stdTestDependencies
 
