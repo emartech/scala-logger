@@ -12,8 +12,8 @@ object Dependencies {
 
   val stdTestDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scalameta"     %% "munit"            % "0.7.26",
-      "org.scalameta"     %% "munit-scalacheck" % "0.7.26"
+      "org.scalameta"     %% "munit"            % "0.7.27",
+      "org.scalameta"     %% "munit-scalacheck" % "0.7.27"
     ).map(_ % Test)
   )
 
