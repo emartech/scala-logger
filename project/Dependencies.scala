@@ -6,7 +6,7 @@ object Dependencies {
 
   val stdDependencies = Seq(
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.4"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
     ) ++ versionSpecificStdDependencies(scalaVersion.value)
   )
 
